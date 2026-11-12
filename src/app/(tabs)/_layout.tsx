@@ -23,7 +23,7 @@ export default function TabLayout() {
         headerTitleStyle: { fontSize: 20, fontWeight: '700', color: colors.text },
         headerShadowVisible: false,
       }}>
-      <Tabs.Screen name="index" options={{ title: '홈', tabBarIcon: tabIcon('home-outline') }} />
+      <Tabs.Screen name="home" options={{ title: '홈', tabBarIcon: tabIcon('home-outline') }} />
       <Tabs.Screen name="community" options={{ title: '동네', tabBarIcon: tabIcon('people-outline') }} />
       <Tabs.Screen name="used" options={{ title: '중고', tabBarIcon: tabIcon('swap-horizontal-outline') }} />
       <Tabs.Screen name="market" options={{ title: '마켓', tabBarIcon: tabIcon('bag-handle-outline') }} />

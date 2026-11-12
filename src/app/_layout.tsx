@@ -33,6 +33,9 @@ function RootNavigator() {
   return (
     <View style={styles.flex}>
       <Stack screenOptions={{ headerShown: false }}>
+        {/* 누구나: 상태에 맞는 화면으로 보내주는 안내 화면 */}
+        <Stack.Screen name="index" />
+
         {/* 시작하기까지 마친 회원 */}
         <Stack.Protected guard={loggedIn && isOnboarded}>
           <Stack.Screen name="(tabs)" />

@@ -38,7 +38,7 @@ export type Post = {
 
 // 목록·상세 화면에서 함께 가져오는 칸 (글쓴이 닉네임, 동네 이름 포함)
 export const POST_COLUMNS =
-  'id, author_id, board, category, title, body, cohort_month, like_count, comment_count, best_at, fact_check_status, is_hidden, created_at, author:profiles(nickname), neighborhood:neighborhoods!inner(sigungu, dong)';
+  'id, author_id, board, category, title, body, cohort_month, like_count, comment_count, best_at, fact_check_status, is_hidden, created_at, author:profiles!posts_author_id_fkey(nickname), neighborhood:neighborhoods!inner(sigungu, dong)';
 
 export type Feed = 'local' | 'all' | 'cohort';
 
