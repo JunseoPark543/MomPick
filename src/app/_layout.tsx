@@ -36,6 +36,8 @@ function RootNavigator() {
         {/* 시작하기까지 마친 회원 */}
         <Stack.Protected guard={loggedIn && isOnboarded}>
           <Stack.Screen name="(tabs)" />
+          <Stack.Screen name="post/[id]" options={{ ...detailHeader, title: '' }} />
+          <Stack.Screen name="post/write" options={{ ...detailHeader, title: '글쓰기' }} />
         </Stack.Protected>
 
         {/* 가입했지만 닉네임·아이·동네를 아직 안 정한 회원 */}
@@ -58,6 +60,16 @@ function RootNavigator() {
     </View>
   );
 }
+
+// 탭 바깥 화면(글 상세 등)의 위쪽 제목줄 모양
+const detailHeader = {
+  headerShown: true,
+  headerStyle: { backgroundColor: colors.background },
+  headerTitleStyle: { fontSize: 20, fontWeight: '700' as const, color: colors.text },
+  headerTintColor: colors.text,
+  headerShadowVisible: false,
+  headerBackButtonDisplayMode: 'minimal' as const,
+};
 
 const styles = StyleSheet.create({
   flex: {

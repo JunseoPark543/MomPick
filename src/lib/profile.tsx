@@ -7,10 +7,13 @@ export type Profile = {
   id: string;
   nickname: string | null;
   neighborhood_code: string | null;
+  neighborhood: { sigungu: string; dong: string } | null;
 };
 
 type ProfileState = {
   profile: Profile | null;
+  // 첫째 아이의 출생 연월 ('YYYY-MM-01'), 없으면 null
+  childBirthMonth: string | null;
   hasChild: boolean;
   // 닉네임·아이 출생 연월·동네를 모두 입력했는지
   isOnboarded: boolean;
@@ -26,22 +29,26 @@ export function ProfileProvider({ children }: PropsWithChildren) {
   const userId = session?.user.id ?? null;
 
   const [profile, setProfile] = useState<Profile | null>(null);
-  const [hasChild, setHasChild] = useState(false);
+  const [childBirthMonth, setChildBirthMonth] = useState<string | null>(null);
   const [loadedUserId, setLoadedUserId] = useState<string | null>(null);
 
   const refresh = useCallback(async () => {
     if (!userId) {
       setProfile(null);
-      setHasChild(false);
+      setChildBirthMonth(null);
       return;
     }
 
     const [profileResult, childResult] = await Promise.all([
-      supabase.from('profiles').select('id, nickname, neighborhood_code').eq('id', userId).single(),
-      supabase.from('children').select('id', { count: 'exact', head: true }),
+      supabase
+        .from('profiles')
+        .select('id, nickname, neighborhood_code, neighborhood:neighborhoods(sigungu, dong)')
+        .eq('id', userId)
+        .single<Profile>(),
+      supabase.from('children').select('birth_month').order('created_at').limit(1).maybeSingle(),
     ]);
     setProfile(profileResult.data ?? null);
-    setHasChild((childResult.count ?? 0) > 0);
+    setChildBirthMonth(childResult.data?.birth_month ?? null);
   }, [userId]);
 
   useEffect(() => {
@@ -54,11 +61,12 @@ export function ProfileProvider({ children }: PropsWithChildren) {
     };
   }, [refresh, userId]);
 
+  const hasChild = childBirthMonth !== null;
   const isLoading = userId !== null && loadedUserId !== userId;
   const isOnboarded = !!profile?.nickname && !!profile.neighborhood_code && hasChild;
 
   return (
-    <ProfileContext.Provider value={{ profile, hasChild, isOnboarded, isLoading, refresh }}>
+    <ProfileContext.Provider value={{ profile, childBirthMonth, hasChild, isOnboarded, isLoading, refresh }}>
       {children}
     </ProfileContext.Provider>
   );
