@@ -11,9 +11,11 @@ import { supabase } from '@/lib/supabase';
 
 type Props = {
   onDone: () => void;
+  // 내 정보 수정에서 쓸 때 버튼 문구 (기본: 다음)
+  submitLabel?: string;
 };
 
-export default function ChildStep({ onDone }: Props) {
+export default function ChildStep({ onDone, submitLabel = '다음' }: Props) {
   const { refresh } = useProfile();
   const [birth, setBirth] = useState<YearMonth | null>(null);
   // 이전 단계로 돌아왔다가 다시 온 경우, 이미 저장한 아이 정보를 고친다
@@ -62,7 +64,7 @@ export default function ChildStep({ onDone }: Props) {
     <StepFrame
       title="아이가 언제 태어났나요?"
       description={'같은 월령 엄마들의 글과 꼭 맞는 상품을 보여드려요.\n태어난 연도와 달만 받아요.'}
-      footer={<AppButton title="다음" onPress={handleNext} loading={saving} />}>
+      footer={<AppButton title={submitLabel} onPress={handleNext} loading={saving} />}>
       <MonthPicker value={birth} onChange={setBirth} />
 
       {birth ? (

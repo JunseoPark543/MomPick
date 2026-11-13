@@ -40,12 +40,18 @@ function RootNavigator() {
         <Stack.Protected guard={!loggedIn || isOnboarded}>
           <Stack.Screen name="(tabs)" />
           <Stack.Screen name="post/[id]" options={{ ...detailHeader, title: '' }} />
+          <Stack.Screen name="used/[id]" options={{ ...detailHeader, title: '' }} />
         </Stack.Protected>
 
         {/* 글쓰기·신고: 시작하기까지 마친 회원만 */}
         <Stack.Protected guard={loggedIn && isOnboarded}>
           <Stack.Screen name="post/write" options={{ ...detailHeader, title: '글쓰기' }} />
           <Stack.Screen name="report" options={{ ...detailHeader, title: '신고하기', presentation: 'modal' }} />
+          <Stack.Screen name="used/new" options={{ ...detailHeader, title: '내 물건 팔기' }} />
+          <Stack.Screen name="chats" options={{ ...detailHeader, title: '채팅' }} />
+          <Stack.Screen name="chat/[roomId]" options={{ ...detailHeader, title: '채팅' }} />
+          <Stack.Screen name="profile/edit" options={{ ...detailHeader, title: '내 정보 수정' }} />
+          <Stack.Screen name="profile/[field]" options={{ ...detailHeader, title: '' }} />
         </Stack.Protected>
 
         {/* 가입했지만 닉네임·아이·동네를 아직 안 정한 회원 */}

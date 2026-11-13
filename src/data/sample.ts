@@ -1,34 +1,9 @@
 // ⚠️ 화면 모양을 잡기 위한 임시 예시 데이터.
-// 중고는 4단계, 마켓은 5단계에서 Supabase 테이블로 바꾸고 이 파일은 지운다.
+// 마켓은 5단계에서 Supabase 테이블로 바꾸고 이 파일은 지운다.
 import type Ionicons from '@expo/vector-icons/Ionicons';
 import type { ComponentProps } from 'react';
 
 type IconName = ComponentProps<typeof Ionicons>['name'];
-
-export type UsedItem = {
-  id: string;
-  title: string;
-  price: number; // 0 이면 나눔
-  dong: string;
-  minutesAgo: number;
-  status: 'selling' | 'reserved' | 'sold';
-  likes: number;
-  chats: number;
-  icon: IconName;
-  tint: string;
-};
-
-export const USED_CATEGORIES = ['전체', '유모차', '카시트', '아기띠', '장난감', '의류', '수유용품', '책·교구'];
-
-export const SAMPLE_USED_ITEMS: UsedItem[] = [
-  { id: 'u1', title: '절충형 유모차 (사용 6개월, 상태 좋아요)', price: 180000, dong: '역삼1동', minutesAgo: 3, status: 'selling', likes: 12, chats: 3, icon: 'cart-outline', tint: '#FDE7E8' },
-  { id: 'u2', title: '회전형 카시트 신생아~4세', price: 95000, dong: '대치2동', minutesAgo: 25, status: 'reserved', likes: 8, chats: 5, icon: 'car-outline', tint: '#E6F0FB' },
-  { id: 'u3', title: '힙시트 아기띠 그레이', price: 30000, dong: '도곡1동', minutesAgo: 60, status: 'selling', likes: 4, chats: 1, icon: 'body-outline', tint: '#EEF6E8' },
-  { id: 'u4', title: '원목 블록 장난감 세트 나눔해요', price: 0, dong: '역삼2동', minutesAgo: 120, status: 'selling', likes: 21, chats: 9, icon: 'cube-outline', tint: '#FFF3DB' },
-  { id: 'u5', title: '아기 내복 80사이즈 5벌 일괄', price: 15000, dong: '개포1동', minutesAgo: 240, status: 'sold', likes: 2, chats: 2, icon: 'shirt-outline', tint: '#F1EAFB' },
-  { id: 'u6', title: '젖병 소독기 + 건조기', price: 40000, dong: '삼성1동', minutesAgo: 600, status: 'selling', likes: 6, chats: 0, icon: 'flask-outline', tint: '#E3F5F5' },
-  { id: 'u7', title: '전집 그림책 60권', price: 70000, dong: '역삼1동', minutesAgo: 1440, status: 'selling', likes: 15, chats: 4, icon: 'book-outline', tint: '#FDECE2' },
-];
 
 export type MarketProduct = {
   id: string;

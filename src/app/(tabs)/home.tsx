@@ -7,20 +7,36 @@ import DealTimer from '@/components/market/DealTimer';
 import ProductThumb from '@/components/ProductThumb';
 import TopBar from '@/components/TopBar';
 import { colors, fontSize } from '@/constants/theme';
-import { SAMPLE_DEALS, SAMPLE_USED_ITEMS, discountRate, todayDealEndsAt } from '@/data/sample';
+import { SAMPLE_DEALS, discountRate, todayDealEndsAt } from '@/data/sample';
 import { useAuth } from '@/lib/auth';
 import { fromBirthMonthDate, monthsOld } from '@/lib/childAge';
 import { formatWon } from '@/lib/format';
 import { CATEGORY_LABELS, POST_COLUMNS, type Post } from '@/lib/posts';
 import { useProfile } from '@/lib/profile';
 import { supabase } from '@/lib/supabase';
+import { USED_COLUMNS, usedImageUrl, type UsedItem } from '@/lib/used';
 
 export default function HomeScreen() {
   const { session } = useAuth();
   const { profile, childBirthMonth } = useProfile();
   const [popular, setPopular] = useState<Post[]>([]);
+  const [usedItems, setUsedItems] = useState<UsedItem[]>([]);
+  const sigungu = profile?.neighborhood?.sigungu ?? null;
 
   const months = childBirthMonth ? monthsOld(fromBirthMonthDate(childBirthMonth)) : null;
+
+  // 새 중고 매물: 회원은 같은 구, 비회원은 전체에서 판매중인 최신 매물
+  useFocusEffect(
+    useCallback(() => {
+      let query = supabase.from('used_items').select(USED_COLUMNS).eq('status', 'selling');
+      if (sigungu) query = query.eq('neighborhood.sigungu', sigungu);
+      query
+        .order('created_at', { ascending: false })
+        .limit(8)
+        .returns<UsedItem[]>()
+        .then(({ data }) => setUsedItems(data ?? []));
+    }, [sigungu]),
+  );
 
   // 인기 글: 회원이면 같은 월령 동기 글, 비회원이면 동네 게시판 전체에서 좋아요 많은 순
   useFocusEffect(
@@ -103,17 +119,26 @@ export default function HomeScreen() {
         </Section>
 
         <Section title="동네 새 중고 매물" onMore={() => router.push('/used')}>
-          <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.hList}>
-            {SAMPLE_USED_ITEMS.slice(0, 5).map((item) => (
-              <View key={item.id} style={styles.usedCard}>
-                <ProductThumb icon={item.icon} tint={item.tint} size={120} radius={10} />
-                <Text style={styles.usedTitle} numberOfLines={1}>
-                  {item.title}
-                </Text>
-                <Text style={styles.usedPrice}>{item.price === 0 ? '나눔' : formatWon(item.price)}</Text>
-              </View>
-            ))}
-          </ScrollView>
+          {usedItems.length === 0 ? (
+            <View style={styles.box}>
+              <Text style={styles.emptyText}>아직 매물이 없어요. 안 쓰는 육아용품을 올려 보세요!</Text>
+            </View>
+          ) : (
+            <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.hList}>
+              {usedItems.map((item) => (
+                <Pressable
+                  key={item.id}
+                  style={styles.usedCard}
+                  onPress={() => router.push({ pathname: '/used/[id]', params: { id: item.id } })}>
+                  <Image source={{ uri: usedImageUrl(item.image_paths[0]) }} style={styles.usedThumb} />
+                  <Text style={styles.usedTitle} numberOfLines={1}>
+                    {item.title}
+                  </Text>
+                  <Text style={styles.usedPrice}>{item.price === 0 ? '나눔' : formatWon(item.price)}</Text>
+                </Pressable>
+              ))}
+            </ScrollView>
+          )}
         </Section>
       </ScrollView>
     </View>
@@ -254,6 +279,12 @@ const styles = StyleSheet.create({
   usedCard: {
     width: 120,
     gap: 4,
+  },
+  usedThumb: {
+    width: 120,
+    height: 120,
+    borderRadius: 10,
+    backgroundColor: '#F3ECE6',
   },
   usedTitle: {
     fontSize: 14,

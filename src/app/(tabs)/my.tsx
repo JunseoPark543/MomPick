@@ -14,12 +14,14 @@ import { supabase } from '@/lib/supabase';
 
 type IconName = ComponentProps<typeof Ionicons>['name'];
 
-const MENU: { icon: IconName; label: string }[] = [
+// href 가 없는 메뉴는 아직 준비 중
+const MENU: { icon: IconName; label: string; href?: '/profile/edit' | '/chats' }[] = [
+  { icon: 'create-outline', label: '내 정보 수정 (닉네임·아이·동네)', href: '/profile/edit' },
+  { icon: 'chatbubbles-outline', label: '중고 채팅', href: '/chats' },
   { icon: 'ticket-outline', label: '쿠폰함' },
   { icon: 'receipt-outline', label: '주문 내역' },
   { icon: 'swap-horizontal-outline', label: '중고 거래 내역' },
   { icon: 'shield-checkmark-outline', label: '살균 서비스 신청 내역' },
-  { icon: 'happy-outline', label: '아이 정보 수정' },
   { icon: 'settings-outline', label: '설정 (차단 목록, 회원 탈퇴)' },
 ];
 
@@ -80,7 +82,7 @@ function MemberView() {
         {MENU.map((item) => (
           <Pressable
             key={item.label}
-            onPress={() => confirm('준비 중', '곧 만들어질 기능이에요.')}
+            onPress={() => (item.href ? router.push(item.href) : confirm('준비 중', '곧 만들어질 기능이에요.'))}
             style={({ pressed }) => [styles.menuItem, pressed && styles.menuPressed]}>
             <Ionicons name={item.icon} size={24} color={colors.text} />
             <Text style={styles.menuLabel}>{item.label}</Text>

@@ -14,7 +14,13 @@ type Neighborhood = {
   dong: string;
 };
 
-export default function NeighborhoodStep() {
+type Props = {
+  // 내 정보 수정에서 쓸 때: 저장 후 할 일과 버튼 문구
+  onDone?: () => void;
+  submitLabel?: string;
+};
+
+export default function NeighborhoodStep({ onDone, submitLabel }: Props) {
   const { profile, refresh } = useProfile();
   const [neighborhoods, setNeighborhoods] = useState<Neighborhood[] | null>(null);
   const [query, setQuery] = useState('');
@@ -61,9 +67,10 @@ export default function NeighborhoodStep() {
       setErrorMessage('저장하지 못했어요. 잠시 후 다시 시도해 주세요.');
       return;
     }
-    // 프로필을 다시 불러오면 시작하기가 완료되어 자동으로 홈 화면으로 넘어간다
+    // 시작하기 중이면 프로필을 다시 불러오는 순간 자동으로 홈 화면으로 넘어간다
     await refresh();
     setSaving(false);
+    onDone?.();
   }
 
   return (
@@ -75,7 +82,7 @@ export default function NeighborhoodStep() {
         <>
           {errorMessage ? <Text style={styles.error}>{errorMessage}</Text> : null}
           <AppButton
-            title={selected ? `${selected.dong}에서 시작하기` : '동네를 골라 주세요'}
+            title={selected ? submitLabel ?? `${selected.dong}에서 시작하기` : '동네를 골라 주세요'}
             onPress={handleDone}
             loading={saving}
             disabled={!selected}

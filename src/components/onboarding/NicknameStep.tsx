@@ -12,9 +12,11 @@ const NICKNAME_PATTERN = /^[가-힣a-zA-Z0-9_]{2,12}$/;
 
 type Props = {
   onDone: () => void;
+  // 내 정보 수정에서 쓸 때 버튼 문구 (기본: 다음)
+  submitLabel?: string;
 };
 
-export default function NicknameStep({ onDone }: Props) {
+export default function NicknameStep({ onDone, submitLabel = '다음' }: Props) {
   const { profile, refresh } = useProfile();
   const [nickname, setNickname] = useState(profile?.nickname ?? '');
   const [errorMessage, setErrorMessage] = useState('');
@@ -49,7 +51,7 @@ export default function NicknameStep({ onDone }: Props) {
     <StepFrame
       title="맘픽에서 쓸 닉네임을 정해 주세요"
       description="동네 게시판과 중고거래에서 다른 회원에게 보여요."
-      footer={<AppButton title="다음" onPress={handleNext} loading={saving} />}>
+      footer={<AppButton title={submitLabel} onPress={handleNext} loading={saving} />}>
       <AppTextInput
         label="닉네임"
         value={nickname}
