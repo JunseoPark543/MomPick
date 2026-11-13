@@ -87,11 +87,11 @@ export default function HomeScreen() {
       <ScrollView contentContainerStyle={styles.content}>
         <View style={styles.gradeWrap}>
           {session ? (
-            <GradeCard onPress={() => router.push('/my')} />
+            <GradeCard />
           ) : (
-            <Pressable style={styles.gradeCard} onPress={() => router.push('/my')}>
+            <Pressable style={styles.gradeCard} onPress={() => router.push('/grades')}>
               <Text style={styles.gradeTitle}>맘픽 시작하기</Text>
-              <Text style={styles.gradeHint}>로그인하고 등급 혜택과 동네 소식을 받아보세요 →</Text>
+              <Text style={styles.gradeHint}>씨앗 맘부터 숲 맘까지, 등급별 혜택 보기 →</Text>
             </Pressable>
           )}
         </View>

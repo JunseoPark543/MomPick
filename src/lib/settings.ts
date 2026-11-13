@@ -16,7 +16,8 @@ export const DEFAULT_SETTINGS: AppSettings = {
   early_access_min_level: 3,
   early_access_minutes: 30,
   used_safe_pay_fee_rate: 0.035,
-  used_fee_discount_by_level: {},
+  // DB(app_settings)에 넣은 초기값과 같게 맞춰 둔다 (비회원 화면용)
+  used_fee_discount_by_level: { '1': 0, '2': 10, '3': 20, '4': 30 },
   market_shipping_fee: 3000,
   market_free_shipping_min: 30000,
   sterilization_price_per_item: 15000,

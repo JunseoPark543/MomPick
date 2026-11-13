@@ -1,4 +1,5 @@
 import Ionicons from '@expo/vector-icons/Ionicons';
+import { router } from 'expo-router';
 import { useEffect, useState } from 'react';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 
@@ -7,11 +8,12 @@ import { conditionsFor, fetchGradeLevels, type GradeLevel } from '@/lib/grades';
 import { useProfile } from '@/lib/profile';
 
 type Props = {
+  // 기본: 등급 안내 화면으로 이동
   onPress?: () => void;
 };
 
 // 내 등급 + 다음 등급까지 남은 조건
-export default function GradeCard({ onPress }: Props) {
+export default function GradeCard({ onPress = () => router.push('/grades') }: Props) {
   const { profile, metrics } = useProfile();
   const [levels, setLevels] = useState<GradeLevel[]>([]);
 
@@ -25,7 +27,7 @@ export default function GradeCard({ onPress }: Props) {
   const conditions = next && metrics ? conditionsFor(next.rule, metrics) : null;
 
   return (
-    <Pressable onPress={onPress} disabled={!onPress} style={styles.card}>
+    <Pressable accessibilityRole="button" onPress={onPress} style={styles.card}>
       <Text style={styles.small}>{profile?.nickname}님은</Text>
       <Text style={styles.title}>
         Lv.{level} {current?.name ?? ''} {current?.emoji ?? ''}
@@ -54,6 +56,7 @@ export default function GradeCard({ onPress }: Props) {
       ) : (
         <Text style={styles.conditionText}>최고 등급이에요! 숲 맘 특권을 누려 보세요.</Text>
       )}
+      <Text style={styles.more}>등급별 혜택 보기 ›</Text>
     </Pressable>
   );
 }
@@ -94,5 +97,12 @@ const styles = StyleSheet.create({
   },
   conditionDone: {
     textDecorationLine: 'line-through',
+  },
+  more: {
+    alignSelf: 'flex-end',
+    fontSize: 14,
+    fontWeight: '700',
+    color: '#FFFFFF',
+    marginTop: 10,
   },
 });

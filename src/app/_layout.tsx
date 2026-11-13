@@ -44,6 +44,7 @@ function RootNavigator() {
           <Stack.Screen name="post/[id]" options={{ ...detailHeader, title: '' }} />
           <Stack.Screen name="used/[id]" options={{ ...detailHeader, title: '' }} />
           <Stack.Screen name="product/[id]" options={{ ...detailHeader, title: '' }} />
+          <Stack.Screen name="grades" options={{ ...detailHeader, title: '등급 안내' }} />
         </Stack.Protected>
 
         {/* 글쓰기·신고: 시작하기까지 마친 회원만 */}
