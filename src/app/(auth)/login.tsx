@@ -33,7 +33,7 @@ export default function LoginScreen() {
   }
 
   return (
-    <FormScreen hasHeader={false}>
+    <FormScreen>
       <View style={styles.hero}>
         <Image
           source={require('../../../assets/images/logo.png')}
@@ -77,7 +77,7 @@ export default function LoginScreen() {
 const styles = StyleSheet.create({
   hero: {
     alignItems: 'center',
-    paddingTop: 48,
+    paddingTop: 8,
     paddingBottom: 16,
     gap: 16,
   },

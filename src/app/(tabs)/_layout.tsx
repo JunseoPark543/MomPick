@@ -19,9 +19,8 @@ export default function TabLayout() {
         tabBarInactiveTintColor: colors.textMuted,
         tabBarLabelStyle: { fontSize: fontSize.tabLabel, fontWeight: '600' },
         tabBarStyle: { backgroundColor: colors.surface, borderTopColor: colors.border },
-        headerStyle: { backgroundColor: colors.background },
-        headerTitleStyle: { fontSize: 20, fontWeight: '700', color: colors.text },
-        headerShadowVisible: false,
+        // 각 탭 화면이 위쪽 제목줄(TopBar)을 직접 그린다
+        headerShown: false,
       }}>
       <Tabs.Screen name="home" options={{ title: '홈', tabBarIcon: tabIcon('home-outline') }} />
       <Tabs.Screen name="community" options={{ title: '동네', tabBarIcon: tabIcon('people-outline') }} />

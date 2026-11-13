@@ -12,7 +12,7 @@ export default function AuthLayout() {
         headerShadowVisible: false,
         headerBackButtonDisplayMode: 'minimal',
       }}>
-      <Stack.Screen name="login" options={{ headerShown: false, title: '로그인' }} />
+      <Stack.Screen name="login" options={{ title: '' }} />
       <Stack.Screen name="signup" options={{ title: '회원가입' }} />
     </Stack>
   );

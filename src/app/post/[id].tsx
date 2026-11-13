@@ -15,6 +15,7 @@ import { fetchComments, type Comment } from '@/lib/comments';
 import { confirm } from '@/lib/confirm';
 import { BOARD_LABELS, POST_COLUMNS, type Post } from '@/lib/posts';
 import { supabase } from '@/lib/supabase';
+import { useRequireLogin } from '@/lib/requireLogin';
 import { timeAgo } from '@/lib/time';
 
 export default function PostDetailScreen() {
@@ -22,6 +23,7 @@ export default function PostDetailScreen() {
   const { session } = useAuth();
   const myId = session?.user.id;
   const headerHeight = useHeaderHeight();
+  const requireLogin = useRequireLogin();
 
   const [post, setPost] = useState<Post | null>(null);
   const [comments, setComments] = useState<Comment[]>([]);
@@ -119,7 +121,12 @@ export default function PostDetailScreen() {
         <Text style={styles.body}>{post.body}</Text>
 
         <View style={styles.actions}>
-          <LikeButton liked={liked} count={post.like_count} disabled={isMine} onPress={toggleLike} />
+          <LikeButton
+            liked={liked}
+            count={post.like_count}
+            disabled={isMine}
+            onPress={() => requireLogin(toggleLike)}
+          />
           {isMine ? (
             <View style={styles.ownerActions}>
               <View style={styles.ownerAction}>
@@ -133,7 +140,17 @@ export default function PostDetailScreen() {
                 <AppButton title="삭제" variant="text" onPress={handleDelete} />
               </View>
             </View>
-          ) : null}
+          ) : (
+            <View style={styles.ownerAction}>
+              <AppButton
+                title="신고"
+                variant="text"
+                onPress={() =>
+                  requireLogin(() => router.push({ pathname: '/report', params: { postId: post.id } }))
+                }
+              />
+            </View>
+          )}
         </View>
 
         <Text style={styles.commentsTitle}>댓글 {comments.length}</Text>
@@ -144,12 +161,21 @@ export default function PostDetailScreen() {
             comment={comment}
             isMine={comment.author_id === myId}
             onDelete={() => handleDeleteComment(comment.id)}
+            onReport={() =>
+              requireLogin(() => router.push({ pathname: '/report', params: { commentId: comment.id } }))
+            }
           />
         ))}
       </ScrollView>
 
       <SafeAreaView edges={['bottom']} style={styles.inputArea}>
-        <CommentInput postId={post.id} onPosted={handleCommentPosted} />
+        {session ? (
+          <CommentInput postId={post.id} onPosted={handleCommentPosted} />
+        ) : (
+          <View style={styles.guestInput}>
+            <AppButton title="로그인하고 댓글 남기기" variant="text" onPress={() => router.push('/login')} />
+          </View>
+        )}
       </SafeAreaView>
     </KeyboardAvoidingView>
   );
@@ -225,5 +251,11 @@ const styles = StyleSheet.create({
   },
   inputArea: {
     backgroundColor: colors.surface,
+  },
+  guestInput: {
+    borderTopWidth: 1,
+    borderTopColor: colors.border,
+    paddingHorizontal: 16,
+    paddingVertical: 6,
   },
 });

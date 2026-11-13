@@ -5,18 +5,39 @@ import { ActivityIndicator, FlatList, Pressable, RefreshControl, StyleSheet, Tex
 
 import PostCard from '@/components/community/PostCard';
 import SegmentedTabs from '@/components/SegmentedTabs';
+import TopBar from '@/components/TopBar';
 import { colors, fontSize } from '@/constants/theme';
+import { useAuth } from '@/lib/auth';
 import { fromBirthMonthDate } from '@/lib/childAge';
 import { fetchFeed, type Feed, type Post } from '@/lib/posts';
 import { useProfile } from '@/lib/profile';
+import { useRequireLogin } from '@/lib/requireLogin';
 
 const PAGE_SIZE = 20;
 
 export default function CommunityScreen() {
+  const { session } = useAuth();
   const { profile, childBirthMonth } = useProfile();
+  const requireLogin = useRequireLogin();
   const sigungu = profile?.neighborhood?.sigungu ?? null;
 
-  const [feed, setFeed] = useState<Feed>('local');
+  // 비회원은 동네·동기 정보가 없으므로 전체·베스트만 볼 수 있다
+  const feedOptions: { value: Feed; label: string }[] = session
+    ? [
+        { value: 'local', label: sigungu ? `우리 동네 · ${sigungu}` : '우리 동네' },
+        { value: 'all', label: '전체글' },
+        { value: 'cohort', label: cohortLabel(childBirthMonth) },
+        { value: 'best', label: '베스트' },
+      ]
+    : [
+        { value: 'all', label: '전체글' },
+        { value: 'best', label: '베스트' },
+      ];
+
+  const [selectedFeed, setSelectedFeed] = useState<Feed>(session ? 'local' : 'all');
+  // 로그인·로그아웃으로 고른 게시판이 사라지면 전체글로
+  const feed = feedOptions.some((o) => o.value === selectedFeed) ? selectedFeed : 'all';
+
   const [posts, setPosts] = useState<Post[]>([]);
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
@@ -59,29 +80,30 @@ export default function CommunityScreen() {
 
   function changeFeed(next: Feed) {
     setPosts([]);
-    setFeed(next);
+    setSelectedFeed(next);
   }
 
-  const cohortLabel = (() => {
-    if (!childBirthMonth) return '동기 모임';
-    const { year, month } = fromBirthMonthDate(childBirthMonth);
-    return `${String(year).slice(2)}년 ${month}월생 동기`;
-  })();
-
-  const emptyWhose = { local: `${sigungu ?? '우리 동네'} `, all: '', cohort: '동기 엄마들의 ' }[feed];
-  const emptyText = `아직 ${emptyWhose}글이 없어요.\n첫 글을 남겨 보세요!`;
+  const emptyText =
+    feed === 'best'
+      ? '아직 베스트 글이 없어요.\n좋아요를 많이 받은 글이 여기에 모여요.'
+      : `아직 ${{ local: `${sigungu ?? '우리 동네'} `, all: '', cohort: '동기 엄마들의 ' }[feed]}글이 없어요.\n첫 글을 남겨 보세요!`;
 
   return (
     <View style={styles.container}>
-      <SegmentedTabs<Feed>
-        value={feed}
-        onChange={changeFeed}
-        options={[
-          { value: 'local', label: sigungu ? `우리 동네 · ${sigungu}` : '우리 동네' },
-          { value: 'all', label: '전체' },
-          { value: 'cohort', label: cohortLabel },
-        ]}
-      />
+      <TopBar>
+        <View style={styles.cafeIcon}>
+          <Ionicons name="people" size={22} color="#FFFFFF" />
+        </View>
+        <View style={styles.cafeText}>
+          <Text style={styles.cafeName}>맘픽 {sigungu ?? '서울'} 엄마들</Text>
+          <Text style={styles.cafeSub}>우리 동네 육아 이야기</Text>
+        </View>
+        <Ionicons name="search-outline" size={26} color={colors.text} />
+      </TopBar>
+
+      <View style={styles.boards}>
+        <SegmentedTabs<Feed> value={feed} onChange={changeFeed} options={feedOptions} />
+      </View>
 
       {loading && posts.length === 0 ? (
         <ActivityIndicator color={colors.primary} style={styles.loading} />
@@ -102,7 +124,11 @@ export default function CommunityScreen() {
       <Pressable
         accessibilityRole="button"
         accessibilityLabel="글쓰기"
-        onPress={() => router.push({ pathname: '/post/write', params: { board: feed === 'cohort' ? 'cohort' : 'local' } })}
+        onPress={() =>
+          requireLogin(() =>
+            router.push({ pathname: '/post/write', params: { board: feed === 'cohort' ? 'cohort' : 'local' } }),
+          )
+        }
         style={({ pressed }) => [styles.fab, pressed && styles.fabPressed]}>
         <Ionicons name="pencil" size={22} color="#FFFFFF" />
         <Text style={styles.fabLabel}>글쓰기</Text>
@@ -111,10 +137,40 @@ export default function CommunityScreen() {
   );
 }
 
+function cohortLabel(birthMonth: string | null) {
+  if (!birthMonth) return '동기 모임';
+  const { year, month } = fromBirthMonthDate(birthMonth);
+  return `${String(year).slice(2)}년 ${month}월생 동기`;
+}
+
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: colors.background,
+    backgroundColor: colors.surface,
+  },
+  cafeIcon: {
+    width: 40,
+    height: 40,
+    borderRadius: 12,
+    backgroundColor: colors.primary,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  cafeText: {
+    flex: 1,
+  },
+  cafeName: {
+    fontSize: 18,
+    fontWeight: '800',
+    color: colors.text,
+  },
+  cafeSub: {
+    fontSize: 13,
+    color: colors.textMuted,
+  },
+  boards: {
+    borderBottomWidth: 1,
+    borderBottomColor: colors.border,
   },
   loading: {
     marginTop: 48,

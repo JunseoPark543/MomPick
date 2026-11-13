@@ -36,11 +36,16 @@ function RootNavigator() {
         {/* 누구나: 상태에 맞는 화면으로 보내주는 안내 화면 */}
         <Stack.Screen name="index" />
 
-        {/* 시작하기까지 마친 회원 */}
-        <Stack.Protected guard={loggedIn && isOnboarded}>
+        {/* 둘러보기: 비회원 + 시작하기를 마친 회원 */}
+        <Stack.Protected guard={!loggedIn || isOnboarded}>
           <Stack.Screen name="(tabs)" />
           <Stack.Screen name="post/[id]" options={{ ...detailHeader, title: '' }} />
+        </Stack.Protected>
+
+        {/* 글쓰기·신고: 시작하기까지 마친 회원만 */}
+        <Stack.Protected guard={loggedIn && isOnboarded}>
           <Stack.Screen name="post/write" options={{ ...detailHeader, title: '글쓰기' }} />
+          <Stack.Screen name="report" options={{ ...detailHeader, title: '신고하기', presentation: 'modal' }} />
         </Stack.Protected>
 
         {/* 가입했지만 닉네임·아이·동네를 아직 안 정한 회원 */}

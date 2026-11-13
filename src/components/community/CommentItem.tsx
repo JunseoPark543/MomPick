@@ -9,9 +9,10 @@ type Props = {
   comment: Comment;
   isMine: boolean;
   onDelete: () => void;
+  onReport: () => void;
 };
 
-export default function CommentItem({ comment, isMine, onDelete }: Props) {
+export default function CommentItem({ comment, isMine, onDelete, onReport }: Props) {
   return (
     <View style={[styles.container, comment.is_fact_check && styles.factCheck]}>
       <View style={styles.header}>
@@ -24,12 +25,12 @@ export default function CommentItem({ comment, isMine, onDelete }: Props) {
         <Text style={styles.meta} numberOfLines={1}>
           {comment.author?.nickname ?? '알 수 없음'} · {timeAgo(comment.created_at)}
         </Text>
-        {isMine ? (
-          <Pressable accessibilityRole="button" onPress={onDelete} hitSlop={10}>
-            <Text style={styles.delete}>삭제</Text>
-          </Pressable>
-        ) : null}
+        <Pressable accessibilityRole="button" onPress={isMine ? onDelete : onReport} hitSlop={10}>
+          <Text style={styles.action}>{isMine ? '삭제' : '신고'}</Text>
+        </Pressable>
       </View>
+
+      {comment.is_hidden ? <Text style={styles.hiddenNotice}>신고가 많아 다른 회원에게는 숨겨진 댓글이에요.</Text> : null}
 
       <Text style={styles.body}>{comment.body}</Text>
 
@@ -77,10 +78,14 @@ const styles = StyleSheet.create({
     fontSize: fontSize.caption,
     color: colors.textMuted,
   },
-  delete: {
+  action: {
     fontSize: fontSize.caption,
     color: colors.textMuted,
     textDecorationLine: 'underline',
+  },
+  hiddenNotice: {
+    fontSize: fontSize.caption,
+    color: colors.error,
   },
   body: {
     fontSize: fontSize.body,
