@@ -17,7 +17,9 @@ export default function ProductCard({ product, width }: Props) {
   return (
     <Pressable
       onPress={() => router.push({ pathname: '/product/[id]', params: { id: product.id } })}
-      style={({ pressed }) => [styles.card, width ? { width, flex: 0 } : null, pressed && styles.pressed]}>
+      // 가로 목록에서는 고정 너비, 격자에서는 남은 칸을 나눠 쓴다
+      // (웹은 flex: 0 을 '너비 0부터 시작'으로 해석하므로 둘을 섞지 않는다)
+      style={({ pressed }) => [styles.card, width ? { width } : styles.fill, pressed && styles.pressed]}>
       <View>
         <ProductImage product={product} />
         {product.early_access ? (
@@ -59,8 +61,10 @@ export function ProductImage({ product, radius = 8 }: { product: Product; radius
 
 const styles = StyleSheet.create({
   card: {
-    flex: 1,
     gap: 3,
+  },
+  fill: {
+    flex: 1,
   },
   pressed: {
     opacity: 0.8,
