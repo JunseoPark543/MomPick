@@ -11,10 +11,15 @@ import { supabase } from '@/lib/supabase';
 
 const REASONS = Object.keys(REPORT_REASON_LABELS) as ReportReason[];
 
-// 글 또는 댓글 신고 (?postId= 또는 ?commentId=)
+// 글·댓글·매물·채팅 신고 (?postId= / ?commentId= / ?usedItemId= / ?chatRoomId= 중 하나)
 export default function ReportScreen() {
-  const { postId, commentId } = useLocalSearchParams<{ postId?: string; commentId?: string }>();
-  const targetName = commentId ? '댓글' : '글';
+  const { postId, commentId, usedItemId, chatRoomId } = useLocalSearchParams<{
+    postId?: string;
+    commentId?: string;
+    usedItemId?: string;
+    chatRoomId?: string;
+  }>();
+  const targetName = commentId ? '댓글' : usedItemId ? '매물' : chatRoomId ? '채팅' : '글';
 
   const [reason, setReason] = useState<ReportReason | null>(null);
   const [detail, setDetail] = useState('');
@@ -31,8 +36,10 @@ export default function ReportScreen() {
     setSending(true);
     setErrorMessage('');
     const { error } = await supabase.from('reports').insert({
-      post_id: commentId ? null : postId,
+      post_id: postId ?? null,
       comment_id: commentId ?? null,
+      used_item_id: usedItemId ?? null,
+      chat_room_id: chatRoomId ?? null,
       reason,
       detail: detail.trim() || null,
     });
@@ -55,7 +62,8 @@ export default function ReportScreen() {
           <Ionicons name="checkmark-circle" size={56} color={colors.primary} />
           <Text style={styles.doneTitle}>신고가 접수됐어요</Text>
           <Text style={styles.doneText}>
-            맘픽 운영팀이 확인할게요.{'\n'}여러 회원이 신고한 {targetName}은 자동으로 가려져요.
+            맘픽 운영팀이 확인할게요.
+            {chatRoomId ? '\n필요하면 상대방을 차단할 수도 있어요.' : `\n여러 회원이 신고한 ${targetName}은 자동으로 가려져요.`}
           </Text>
         </View>
         <AppButton title="닫기" onPress={() => router.back()} />

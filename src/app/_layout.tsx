@@ -35,12 +35,15 @@ function RootNavigator() {
       <Stack screenOptions={{ headerShown: false }}>
         {/* 누구나: 상태에 맞는 화면으로 보내주는 안내 화면 */}
         <Stack.Screen name="index" />
+        {/* 누구나: 약관·개인정보처리방침 (가입 화면에서도 열 수 있게) */}
+        <Stack.Screen name="legal/[doc]" options={{ ...detailHeader, title: '' }} />
 
         {/* 둘러보기: 비회원 + 시작하기를 마친 회원 */}
         <Stack.Protected guard={!loggedIn || isOnboarded}>
           <Stack.Screen name="(tabs)" />
           <Stack.Screen name="post/[id]" options={{ ...detailHeader, title: '' }} />
           <Stack.Screen name="used/[id]" options={{ ...detailHeader, title: '' }} />
+          <Stack.Screen name="product/[id]" options={{ ...detailHeader, title: '' }} />
         </Stack.Protected>
 
         {/* 글쓰기·신고: 시작하기까지 마친 회원만 */}
@@ -52,6 +55,15 @@ function RootNavigator() {
           <Stack.Screen name="chat/[roomId]" options={{ ...detailHeader, title: '채팅' }} />
           <Stack.Screen name="profile/edit" options={{ ...detailHeader, title: '내 정보 수정' }} />
           <Stack.Screen name="profile/[field]" options={{ ...detailHeader, title: '' }} />
+          <Stack.Screen name="checkout" options={{ ...detailHeader, title: '주문하기' }} />
+          <Stack.Screen name="subscribe" options={{ ...detailHeader, title: '정기 구독' }} />
+          <Stack.Screen name="orders" options={{ ...detailHeader, title: '주문·구독 내역' }} />
+          <Stack.Screen name="sterilize/new" options={{ ...detailHeader, title: '살균 서비스 신청' }} />
+          <Stack.Screen name="sterilize/history" options={{ ...detailHeader, title: '살균 신청 내역' }} />
+          <Stack.Screen name="coupons" options={{ ...detailHeader, title: '쿠폰함' }} />
+          <Stack.Screen name="perks" options={{ ...detailHeader, title: '숲 맘 특권' }} />
+          <Stack.Screen name="settings" options={{ ...detailHeader, title: '설정' }} />
+          <Stack.Screen name="level-up" options={{ ...detailHeader, title: '', presentation: 'modal' }} />
         </Stack.Protected>
 
         {/* 가입했지만 닉네임·아이·동네를 아직 안 정한 회원 */}

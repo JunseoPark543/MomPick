@@ -11,6 +11,7 @@ import LikeButton from '@/components/community/LikeButton';
 import PostBadges from '@/components/community/PostBadges';
 import { colors, fontSize } from '@/constants/theme';
 import { useAuth } from '@/lib/auth';
+import { blockUser } from '@/lib/block';
 import { fetchComments, type Comment } from '@/lib/comments';
 import { confirm } from '@/lib/confirm';
 import { BOARD_LABELS, POST_COLUMNS, type Post } from '@/lib/posts';
@@ -141,14 +142,27 @@ export default function PostDetailScreen() {
               </View>
             </View>
           ) : (
-            <View style={styles.ownerAction}>
-              <AppButton
-                title="신고"
-                variant="text"
-                onPress={() =>
-                  requireLogin(() => router.push({ pathname: '/report', params: { postId: post.id } }))
-                }
-              />
+            <View style={styles.ownerActions}>
+              <View style={styles.ownerAction}>
+                <AppButton
+                  title="신고"
+                  variant="text"
+                  onPress={() =>
+                    requireLogin(() => router.push({ pathname: '/report', params: { postId: post.id } }))
+                  }
+                />
+              </View>
+              <View style={styles.ownerAction}>
+                <AppButton
+                  title="차단"
+                  variant="text"
+                  onPress={() =>
+                    requireLogin(async () => {
+                      if (await blockUser(post.author_id, post.author?.nickname)) router.back();
+                    })
+                  }
+                />
+              </View>
             </View>
           )}
         </View>
@@ -163,6 +177,13 @@ export default function PostDetailScreen() {
             onDelete={() => handleDeleteComment(comment.id)}
             onReport={() =>
               requireLogin(() => router.push({ pathname: '/report', params: { commentId: comment.id } }))
+            }
+            onBlock={() =>
+              requireLogin(async () => {
+                if (await blockUser(comment.author_id, comment.author?.nickname)) {
+                  setComments((prev) => prev.filter((c) => c.author_id !== comment.author_id));
+                }
+              })
             }
           />
         ))}

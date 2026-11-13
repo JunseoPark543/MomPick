@@ -3,12 +3,14 @@ import { router, useFocusEffect } from 'expo-router';
 import { useCallback, useState } from 'react';
 import { Image, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 
+import GradeCard from '@/components/GradeCard';
 import DealTimer from '@/components/market/DealTimer';
-import ProductThumb from '@/components/ProductThumb';
+import ProductCard from '@/components/market/ProductCard';
 import TopBar from '@/components/TopBar';
 import { colors, fontSize } from '@/constants/theme';
-import { SAMPLE_DEALS, discountRate, todayDealEndsAt } from '@/data/sample';
 import { useAuth } from '@/lib/auth';
+import type { Product } from '@/lib/market';
+import { useLevelCheck } from '@/lib/useLevelCheck';
 import { fromBirthMonthDate, monthsOld } from '@/lib/childAge';
 import { formatWon } from '@/lib/format';
 import { CATEGORY_LABELS, POST_COLUMNS, type Post } from '@/lib/posts';
@@ -24,6 +26,27 @@ export default function HomeScreen() {
   const sigungu = profile?.neighborhood?.sigungu ?? null;
 
   const months = childBirthMonth ? monthsOld(fromBirthMonthDate(childBirthMonth)) : null;
+  const levelCheck = useLevelCheck();
+  const [deals, setDeals] = useState<Product[]>([]);
+
+  // 홈에 올 때마다 등급을 확인한다 (시작하기를 막 끝낸 회원은 여기서 씨앗 맘이 된다)
+  useFocusEffect(
+    useCallback(() => {
+      if (session) levelCheck();
+      supabase
+        .from('products')
+        .select('*')
+        .eq('is_deal', true)
+        .order('sort_order')
+        .returns<Product[]>()
+        .then(({ data }) => setDeals(data ?? []));
+    }, [session, levelCheck]),
+  );
+
+  // 가장 먼저 끝나는 특가의 마감 시각
+  const dealEnds = deals
+    .map((p) => (p.deal_ends_at ? new Date(p.deal_ends_at).getTime() : Infinity))
+    .reduce((a, b) => Math.min(a, b), Infinity);
 
   // 새 중고 매물: 회원은 같은 구, 비회원은 전체에서 판매중인 최신 매물
   useFocusEffect(
@@ -62,38 +85,29 @@ export default function HomeScreen() {
       </TopBar>
 
       <ScrollView contentContainerStyle={styles.content}>
-        {/* 등급 카드 (7단계에서 실제 등급으로 교체) */}
-        <Pressable style={styles.gradeCard} onPress={() => router.push('/my')}>
+        <View style={styles.gradeWrap}>
           {session ? (
-            <>
-              <Text style={styles.gradeSmall}>{profile?.nickname}님은</Text>
-              <Text style={styles.gradeTitle}>Lv.1 씨앗 맘 🌱</Text>
-              <Text style={styles.gradeHint}>다음 등급까지: 이유식 첫 구매 또는 중고거래 1회</Text>
-            </>
+            <GradeCard onPress={() => router.push('/my')} />
           ) : (
-            <>
+            <Pressable style={styles.gradeCard} onPress={() => router.push('/my')}>
               <Text style={styles.gradeTitle}>맘픽 시작하기</Text>
               <Text style={styles.gradeHint}>로그인하고 등급 혜택과 동네 소식을 받아보세요 →</Text>
-            </>
+            </Pressable>
           )}
-        </Pressable>
+        </View>
 
-        <Section title="오늘의 특가" right={<DealTimer endsAt={todayDealEndsAt()} />} onMore={() => router.push('/market')}>
-          <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.hList}>
-            {SAMPLE_DEALS.map((p) => (
-              <View key={p.id} style={styles.dealCard}>
-                <ProductThumb icon={p.icon} tint={p.tint} size={130} radius={10} />
-                <Text style={styles.dealName} numberOfLines={2}>
-                  {p.name}
-                </Text>
-                <Text style={styles.dealPrice}>
-                  <Text style={styles.dealDiscount}>{discountRate(p)}% </Text>
-                  {formatWon(p.price)}
-                </Text>
-              </View>
-            ))}
-          </ScrollView>
-        </Section>
+        {deals.length > 0 ? (
+          <Section
+            title="오늘의 특가"
+            right={Number.isFinite(dealEnds) ? <DealTimer endsAt={dealEnds} /> : undefined}
+            onMore={() => router.push('/market')}>
+            <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.hList}>
+              {deals.map((p) => (
+                <ProductCard key={p.id} product={p} width={140} />
+              ))}
+            </ScrollView>
+          </Section>
+        ) : null}
 
         <Section
           title={months !== null ? `${months}개월 동기 인기 글` : '동네 인기 글'}
@@ -184,8 +198,10 @@ const styles = StyleSheet.create({
     paddingVertical: 16,
     gap: 28,
   },
-  gradeCard: {
+  gradeWrap: {
     marginHorizontal: 16,
+  },
+  gradeCard: {
     padding: 20,
     borderRadius: 18,
     backgroundColor: colors.primary,

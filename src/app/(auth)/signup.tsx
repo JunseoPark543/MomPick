@@ -1,3 +1,4 @@
+import { router } from 'expo-router';
 import { useState } from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 
@@ -103,6 +104,16 @@ export default function SignupScreen() {
           checked={termsAgreed}
           onToggle={() => setTermsAgreed((v) => !v)}
         />
+        <View style={styles.legalLinks}>
+          <Text style={styles.legalLink} onPress={() => router.push({ pathname: '/legal/[doc]', params: { doc: 'terms' } })}>
+            이용약관 보기
+          </Text>
+          <Text
+            style={styles.legalLink}
+            onPress={() => router.push({ pathname: '/legal/[doc]', params: { doc: 'privacy' } })}>
+            개인정보처리방침 보기
+          </Text>
+        </View>
       </View>
 
       {errorMessage ? <Text style={styles.error}>{errorMessage}</Text> : null}
@@ -117,6 +128,17 @@ const styles = StyleSheet.create({
   checks: {
     gap: 4,
     paddingVertical: 4,
+  },
+  legalLinks: {
+    flexDirection: 'row',
+    gap: 16,
+    paddingLeft: 40,
+  },
+  legalLink: {
+    fontSize: fontSize.caption,
+    color: colors.textMuted,
+    textDecorationLine: 'underline',
+    paddingVertical: 6,
   },
   error: {
     fontSize: fontSize.body,

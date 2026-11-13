@@ -10,9 +10,10 @@ type Props = {
   isMine: boolean;
   onDelete: () => void;
   onReport: () => void;
+  onBlock: () => void;
 };
 
-export default function CommentItem({ comment, isMine, onDelete, onReport }: Props) {
+export default function CommentItem({ comment, isMine, onDelete, onReport, onBlock }: Props) {
   return (
     <View style={[styles.container, comment.is_fact_check && styles.factCheck]}>
       <View style={styles.header}>
@@ -25,9 +26,20 @@ export default function CommentItem({ comment, isMine, onDelete, onReport }: Pro
         <Text style={styles.meta} numberOfLines={1}>
           {comment.author?.nickname ?? '알 수 없음'} · {timeAgo(comment.created_at)}
         </Text>
-        <Pressable accessibilityRole="button" onPress={isMine ? onDelete : onReport} hitSlop={10}>
-          <Text style={styles.action}>{isMine ? '삭제' : '신고'}</Text>
-        </Pressable>
+        {isMine ? (
+          <Pressable accessibilityRole="button" onPress={onDelete} hitSlop={10}>
+            <Text style={styles.action}>삭제</Text>
+          </Pressable>
+        ) : (
+          <>
+            <Pressable accessibilityRole="button" onPress={onReport} hitSlop={10}>
+              <Text style={styles.action}>신고</Text>
+            </Pressable>
+            <Pressable accessibilityRole="button" onPress={onBlock} hitSlop={10}>
+              <Text style={styles.action}>차단</Text>
+            </Pressable>
+          </>
+        )}
       </View>
 
       {comment.is_hidden ? <Text style={styles.hiddenNotice}>신고가 많아 다른 회원에게는 숨겨진 댓글이에요.</Text> : null}

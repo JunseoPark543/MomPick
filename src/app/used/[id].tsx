@@ -15,6 +15,7 @@ import AppButton from '@/components/AppButton';
 import SegmentedTabs from '@/components/SegmentedTabs';
 import { colors, fontSize } from '@/constants/theme';
 import { useAuth } from '@/lib/auth';
+import { blockUser } from '@/lib/block';
 import { confirm } from '@/lib/confirm';
 import { formatWon } from '@/lib/format';
 import { useRequireLogin } from '@/lib/requireLogin';
@@ -162,7 +163,32 @@ export default function UsedItemScreen() {
               <Text style={styles.hint}>거래 완료는 채팅방에서 구매자를 골라 처리해요.</Text>
             </View>
           ) : null}
-          {isMine ? <AppButton title="매물 삭제" variant="text" onPress={handleDelete} /> : null}
+          {isMine ? (
+            <AppButton title="매물 삭제" variant="text" onPress={handleDelete} />
+          ) : (
+            <View style={styles.otherActions}>
+              <View style={styles.otherAction}>
+                <AppButton
+                  title="신고"
+                  variant="text"
+                  onPress={() =>
+                    requireLogin(() => router.push({ pathname: '/report', params: { usedItemId: item.id } }))
+                  }
+                />
+              </View>
+              <View style={styles.otherAction}>
+                <AppButton
+                  title="판매자 차단"
+                  variant="text"
+                  onPress={() =>
+                    requireLogin(async () => {
+                      if (await blockUser(item.seller_id, item.seller?.nickname)) router.back();
+                    })
+                  }
+                />
+              </View>
+            </View>
+          )}
         </View>
       </ScrollView>
 
@@ -309,6 +335,14 @@ const styles = StyleSheet.create({
   hint: {
     fontSize: fontSize.caption,
     color: colors.textMuted,
+  },
+  otherActions: {
+    flexDirection: 'row',
+    justifyContent: 'flex-end',
+    marginTop: 16,
+  },
+  otherAction: {
+    minWidth: 90,
   },
   bottomBar: {
     borderTopWidth: 1,
