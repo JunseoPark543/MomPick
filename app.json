@@ -8,7 +8,8 @@
     "scheme": "mompick",
     "userInterfaceStyle": "light",
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "bundleIdentifier": "com.mompick.app"
     },
     "android": {
       "adaptiveIcon": {
@@ -17,10 +18,15 @@
         "backgroundImage": "./assets/android-icon-background.png",
         "monochromeImage": "./assets/android-icon-monochrome.png"
       },
-      "predictiveBackGestureEnabled": false
+      "predictiveBackGestureEnabled": false,
+      "package": "com.mompick.app",
+      "permissions": [
+        "android.permission.RECORD_AUDIO"
+      ]
     },
     "web": {
-      "favicon": "./assets/favicon.png"
+      "favicon": "./assets/favicon.png",
+      "output": "static"
     },
     "plugins": [
       "expo-router",
@@ -36,6 +42,17 @@
     ],
     "experiments": {
       "typedRoutes": true
-    }
+    },
+    "extra": {
+      "router": {
+        "asyncRoutes": {
+          "web": true
+        }
+      },
+      "eas": {
+        "projectId": "ee67da75-47f0-4a1d-b85e-c50bc9309e90"
+      }
+    },
+    "owner": "koreawnstj12abc"
   }
 }
