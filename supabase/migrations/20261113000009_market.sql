@@ -28,7 +28,7 @@ create table public.products (
   is_active boolean not null default true,
   sort_order integer not null default 0,
   created_at timestamptz not null default now(),
-  constraint products_price_check check (original_price >= price)
+  constraint products_original_price_check check (original_price >= price)
 );
 
 create index products_list_idx on public.products (is_active, sort_order, created_at desc);

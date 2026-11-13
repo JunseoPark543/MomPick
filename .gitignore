@@ -42,3 +42,6 @@ yarn-error.*
 
 # env files (비밀 키)
 .env
+
+# 예시 데이터용 가짜 회원 비밀번호
+scripts/*.local.json
