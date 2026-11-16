@@ -1308,6 +1308,7 @@ export type Database = {
         Returns: string
       }
       can_manage_product_folder: { Args: { folder: string }; Returns: boolean }
+      can_report_chat_room: { Args: { p_room: string }; Returns: boolean }
       cancel_sterilization: { Args: { p_id: string }; Returns: undefined }
       cancel_subscription: { Args: { p_id: string }; Returns: undefined }
       complete_used_trade: {
