@@ -78,7 +78,7 @@ export default function HomeScreen() {
   return (
     <View style={styles.container}>
       <TopBar>
-        <Image source={require('../../../assets/images/logo.png')} style={styles.logo} resizeMode="contain" />
+        <Image source={require('../../../assets/images/logo-header.png')} style={styles.logo} resizeMode="contain" />
         <View style={styles.spacer} />
         <Ionicons name="search-outline" size={26} color={colors.text} />
         <Ionicons name="notifications-outline" size={26} color={colors.text} />

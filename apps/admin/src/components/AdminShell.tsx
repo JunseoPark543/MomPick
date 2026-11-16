@@ -81,7 +81,7 @@ export default function AdminShell({ children }: { children: ReactNode }) {
     <div className="flex min-h-screen flex-col md:flex-row">
       <aside className="border-b border-line bg-white md:w-56 md:shrink-0 md:border-b-0 md:border-r">
         <div className="flex items-center gap-2 px-5 py-4">
-          <Image src="/logo.png" alt="맘픽" width={64} height={36} priority />
+          <Image src="/brand/logo-header.png" alt="맘픽" width={64} height={36} preload />
           <span className="text-sm font-bold text-muted">관리자</span>
         </div>
         <nav className="flex gap-1 overflow-x-auto px-3 pb-3 md:flex-col md:overflow-visible">

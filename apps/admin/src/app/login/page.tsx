@@ -31,7 +31,7 @@ export default function LoginPage() {
     <div className="flex flex-1 items-center justify-center p-6">
       <form onSubmit={handleSubmit} className="w-full max-w-sm rounded-2xl border border-line bg-white p-8">
         <div className="mb-6 flex items-center gap-2">
-          <Image src="/logo.png" alt="맘픽" width={80} height={45} priority />
+          <Image src="/brand/logo-login.png" alt="맘픽" width={80} height={45} preload />
           <span className="font-bold text-muted">관리자</span>
         </div>
         <ErrorText>{error}</ErrorText>

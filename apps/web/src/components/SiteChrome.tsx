@@ -13,7 +13,7 @@ export function SiteHeader() {
     <header className="bg-white">
       <div className="mx-auto flex h-16 max-w-[1100px] items-center justify-between px-6">
         <Link href="/" aria-label="맘픽 홈">
-          <Image src="/logo.png" alt="맘픽" width={68} height={38} priority />
+          <Image src="/brand/logo-header.png" alt="맘픽" width={68} height={38} preload />
         </Link>
         <nav className="flex gap-8 text-[15px] font-semibold text-sub">
           {NAV.map((item) => (

@@ -117,7 +117,7 @@ export default function SellerShell({ children }: { children: ReactNode }) {
         <aside className="border-b border-line bg-white md:w-56 md:shrink-0 md:border-b-0 md:border-r">
           <div className="px-5 py-4">
             <div className="flex items-center gap-2">
-              <Image src="/logo.png" alt="맘픽" width={64} height={36} priority />
+              <Image src="/brand/logo-header.png" alt="맘픽" width={64} height={36} preload />
               <span className="text-sm font-bold text-muted">판매자</span>
             </div>
             <p className="mt-2 truncate text-sm font-bold">{seller.name}</p>

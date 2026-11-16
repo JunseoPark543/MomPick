@@ -36,7 +36,7 @@ export default function LoginScreen() {
     <FormScreen>
       <View style={styles.hero}>
         <Image
-          source={require('../../../assets/images/logo.png')}
+          source={require('../../../assets/images/logo-auth.png')}
           style={styles.logo}
           resizeMode="contain"
           accessibilityLabel="맘픽"
