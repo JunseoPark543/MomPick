@@ -70,6 +70,8 @@ npx eas-cli@latest build -p android --profile preview
   select id, '관리자' from auth.users where email = '<이메일>';
   ```
 - **Vercel 배포 완료**: 프로젝트 `mompik-admin`, Root Directory `apps/admin`, 주소 https://admin.mompik.com. GitHub `main` 자동 배포.
+- 관리자 로그인·검증용 업체 반려는 사용자 확인 완료(2026-11-16). 작업 기록 누락 수정(`20261116131456`) 운영 적용 완료. 이전 누락 기록은 복원하지 않으며 이후 변경부터 기록한다.
+- 작업 기록 회귀 검사: `npx supabase db query --remote --file scripts/check-admin-actions.sql --yes`. 실행 전 운영 DB 검사임을 사용자에게 알린다. 등록된 관리자와 검증용 업체 대표가 필요하며, 관리자 변경 기록·변경 전후 값·일반 회원 권한을 검사하고 마지막에 시험 변경과 기록을 모두 원복한다.
 
 ## 판매자 웹 (`apps/seller`)
 - 비밀 값: `apps/seller/.env.local` — 관리자 웹과 같은 두 공개 값 (`.env.example` 참고).
