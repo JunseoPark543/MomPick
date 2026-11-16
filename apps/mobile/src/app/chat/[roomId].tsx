@@ -112,7 +112,8 @@ export default function ChatRoomScreen() {
     const { error } = await supabase.rpc('complete_used_trade', {
       p_room_id: room.id,
       p_method: method,
-      p_coupon_id: method === 'safe' ? feeCoupon?.id ?? null : null,
+      // 이 함수는 쿠폰이 없으면 값을 아예 안 보내면 된다 (서버 기본값 null)
+      p_coupon_id: method === 'safe' ? feeCoupon?.id : undefined,
     });
     if (error) {
       await confirm('완료하지 못했어요', rpcErrorMessage(error));

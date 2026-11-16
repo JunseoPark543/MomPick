@@ -37,8 +37,9 @@ export default function WritePostScreen() {
       .single()
       .then(({ data }) => {
         if (!data) return;
-        setBoard(data.board);
-        setCategory(data.category);
+        // DB 는 글자로만 알려주므로 앱의 정해진 목록 타입으로 맞춘다
+        setBoard(data.board as Board);
+        setCategory(data.category as Category);
         setTitle(data.title);
         setBody(data.body);
       });

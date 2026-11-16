@@ -7,6 +7,12 @@
   ],
   "scripts": {
     "mobile": "npm run start --workspace @mompick/mobile",
-    "seed": "node scripts/seed.mjs"
+    "seed": "node scripts/seed.mjs",
+    "db:types": "supabase gen types --remote --schema public > packages/shared/src/database.types.ts",
+    "db:push": "supabase db push --remote",
+    "db:status": "supabase migration list --remote"
+  },
+  "devDependencies": {
+    "supabase": "^3.1.0"
   }
 }

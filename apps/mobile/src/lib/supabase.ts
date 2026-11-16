@@ -1,3 +1,4 @@
+import type { Database } from '@mompick/shared';
 import { createClient } from '@supabase/supabase-js';
 import { AppState, Platform } from 'react-native';
 
@@ -13,7 +14,7 @@ if (!supabaseUrl || !supabasePublishableKey) {
   throw new Error('.env.local 에 EXPO_PUBLIC_SUPABASE_URL 과 EXPO_PUBLIC_SUPABASE_PUBLISHABLE_KEY 를 넣어주세요.');
 }
 
-export const supabase = createClient(supabaseUrl, supabasePublishableKey, {
+export const supabase = createClient<Database>(supabaseUrl, supabasePublishableKey, {
   auth: {
     storage: authStorage,
     autoRefreshToken: true,
