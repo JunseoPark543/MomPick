@@ -12,10 +12,10 @@ import { BEST_POSTS, SEED_CHATS, SEED_COMMENTS, SEED_POSTS, SEED_USED_ITEMS, SEE
 const here = path.dirname(fileURLToPath(import.meta.url));
 const root = path.join(here, '..');
 
-// .env.local 에서 주소와 공개 키를 읽는다
+// 구매자 앱(apps/mobile/.env.local)의 주소와 공개 키를 읽는다
 const env = Object.fromEntries(
   fs
-    .readFileSync(path.join(root, '.env.local'), 'utf8')
+    .readFileSync(path.join(root, 'apps', 'mobile', '.env.local'), 'utf8')
     .split(/\r?\n/)
     .filter((line) => /^[A-Z_]+=/.test(line))
     .map((line) => [line.slice(0, line.indexOf('=')), line.slice(line.indexOf('=') + 1).replace(/^"|"$/g, '')]),
