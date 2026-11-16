@@ -12,7 +12,8 @@
     "db:push": "supabase db push --remote",
     "db:status": "supabase migration list --remote",
     "admin": "npm run dev --workspace @mompick/admin",
-    "seller": "npm run dev --workspace @mompick/seller"
+    "seller": "npm run dev --workspace @mompick/seller",
+    "web": "npm run dev --workspace @mompick/web"
   },
   "devDependencies": {
     "supabase": "^3.1.0"

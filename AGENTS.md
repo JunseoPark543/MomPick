@@ -49,6 +49,7 @@ mompick/
 ├─ apps/mobile/       구매자 앱 (Expo). 앱 전용 규칙은 apps/mobile/AGENTS.md
 ├─ apps/seller/       판매자 웹 — Next.js 16, Vercel(예정). 관리자 웹과 같은 구조 (apps/seller/AGENTS.md)
 ├─ apps/admin/        관리자 웹 — Next.js 16, Vercel(예정). 앱 전용 규칙은 apps/admin/AGENTS.md (Next 16 문서를 먼저 읽을 것)
+├─ apps/web/          대표(소개) 페이지 — 메인(예비 회원용) + /partners(입점 안내). Next.js 16, Vercel(예정)
 ├─ packages/shared/   @mompick/shared: DB 타입(자동 생성) + 공통 코드
 ├─ supabase/          DB 설계 SQL(migrations) + CLI 설정 — 모든 앱 공통
 ├─ scripts/           예시 데이터 넣기 (npm run seed)
@@ -61,6 +62,7 @@ mompick/
 | `npm run mobile` | 구매자 앱 개발 서버 |
 | `npm run admin` | 관리자 웹 개발 서버 (http://localhost:3001) |
 | `npm run seller` | 판매자 웹 개발 서버 (http://localhost:3002) |
+| `npm run web` | 대표 페이지 개발 서버 (http://localhost:3000) |
 | `cd apps/admin && npx next build && npx eslint` | 관리자 웹 빌드·코드 점검 (작업 끝내기 전에 꼭, 판매자 웹은 apps/seller) |
 | `npm run db:status` | DB 변경(마이그레이션) 적용 기록 |
 | `npm run db:push` | 새 SQL 파일을 운영 DB 에 적용 (먼저 사용자에게 알림) |

@@ -47,5 +47,10 @@ npx eas-cli@latest build -p android --profile preview
 - 내 컴퓨터에서: 맨 위 폴더에서 `npm run seller` → http://localhost:3002
 - Vercel 배포 (아직 안 함): 관리자 웹과 같은 방법, Root Directory 만 `apps/seller`.
 
+## 대표 페이지 (`apps/web`)
+- 내 컴퓨터에서: 맨 위 폴더에서 `npm run web` → http://localhost:3000
+- 환경 변수(선택): `NEXT_PUBLIC_APP_WEB_URL`(구매자 웹 주소, 기본은 미리보기 주소), `NEXT_PUBLIC_SELLER_SIGNUP_URL`(판매자 웹 가입 주소, 비우면 신청 버튼이 "준비 중")
+- Vercel 배포 (아직 안 함): Root Directory `apps/web`. 맘픽 도메인을 여기에 연결한다.
+
 ## 예시 데이터
 - `npm run seed` (맨 위 폴더). 가짜 회원 비밀번호는 `scripts/seed-accounts.local.json`(Git 제외).
