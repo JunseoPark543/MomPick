@@ -14,6 +14,54 @@ export type Database = {
   }
   public: {
     Tables: {
+      admin_actions: {
+        Row: {
+          action: string
+          admin_id: string | null
+          created_at: string
+          detail: Json
+          id: number
+          target_id: string | null
+          target_table: string
+        }
+        Insert: {
+          action: string
+          admin_id?: string | null
+          created_at?: string
+          detail?: Json
+          id?: never
+          target_id?: string | null
+          target_table: string
+        }
+        Update: {
+          action?: string
+          admin_id?: string | null
+          created_at?: string
+          detail?: Json
+          id?: never
+          target_id?: string | null
+          target_table?: string
+        }
+        Relationships: []
+      }
+      admin_users: {
+        Row: {
+          created_at: string
+          note: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          note?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          note?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       app_settings: {
         Row: {
           description: string
@@ -270,6 +318,7 @@ export type Database = {
           kind: string
           min_order: number
           name: string
+          seller_id: string | null
           seller_share_pct: number
           valid_days: number
           value: number
@@ -283,6 +332,7 @@ export type Database = {
           kind: string
           min_order?: number
           name: string
+          seller_id?: string | null
           seller_share_pct?: number
           valid_days?: number
           value: number
@@ -296,6 +346,7 @@ export type Database = {
           kind?: string
           min_order?: number
           name?: string
+          seller_id?: string | null
           seller_share_pct?: number
           valid_days?: number
           value?: number
@@ -307,6 +358,13 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "grade_levels"
             referencedColumns: ["level"]
+          },
+          {
+            foreignKeyName: "coupon_templates_seller_id_fkey"
+            columns: ["seller_id"]
+            isOneToOne: false
+            referencedRelation: "sellers"
+            referencedColumns: ["id"]
           },
         ]
       }
@@ -357,27 +415,39 @@ export type Database = {
       }
       order_items: {
         Row: {
+          fulfillment_status: string
           id: string
           order_id: string
           product_id: string
           product_name: string
           quantity: number
+          seller_id: string
+          shipped_at: string | null
+          tracking_number: string | null
           unit_price: number
         }
         Insert: {
+          fulfillment_status?: string
           id?: string
           order_id: string
           product_id: string
           product_name: string
           quantity: number
+          seller_id: string
+          shipped_at?: string | null
+          tracking_number?: string | null
           unit_price: number
         }
         Update: {
+          fulfillment_status?: string
           id?: string
           order_id?: string
           product_id?: string
           product_name?: string
           quantity?: number
+          seller_id?: string
+          shipped_at?: string | null
+          tracking_number?: string | null
           unit_price?: number
         }
         Relationships: [
@@ -393,6 +463,13 @@ export type Database = {
             columns: ["product_id"]
             isOneToOne: false
             referencedRelation: "products"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "order_items_seller_id_fkey"
+            columns: ["seller_id"]
+            isOneToOne: false
+            referencedRelation: "sellers"
             referencedColumns: ["id"]
           },
         ]
@@ -619,6 +696,7 @@ export type Database = {
           price: number
           rating: number
           review_count: number
+          seller_id: string
           seller_name: string
           sort_order: number
           stock: number
@@ -643,6 +721,7 @@ export type Database = {
           price: number
           rating?: number
           review_count?: number
+          seller_id: string
           seller_name?: string
           sort_order?: number
           stock?: number
@@ -667,13 +746,22 @@ export type Database = {
           price?: number
           rating?: number
           review_count?: number
+          seller_id?: string
           seller_name?: string
           sort_order?: number
           stock?: number
           subscribable?: boolean
           tint?: string
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "products_seller_id_fkey"
+            columns: ["seller_id"]
+            isOneToOne: false
+            referencedRelation: "sellers"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       profiles: {
         Row: {
@@ -793,6 +881,101 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      seller_contacts: {
+        Row: {
+          business_number: string | null
+          contact_email: string
+          contact_phone: string
+          seller_id: string
+        }
+        Insert: {
+          business_number?: string | null
+          contact_email: string
+          contact_phone: string
+          seller_id: string
+        }
+        Update: {
+          business_number?: string | null
+          contact_email?: string
+          contact_phone?: string
+          seller_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "seller_contacts_seller_id_fkey"
+            columns: ["seller_id"]
+            isOneToOne: true
+            referencedRelation: "sellers"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      seller_members: {
+        Row: {
+          created_at: string
+          role: string
+          seller_id: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          role?: string
+          seller_id: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          role?: string
+          seller_id?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "seller_members_seller_id_fkey"
+            columns: ["seller_id"]
+            isOneToOne: false
+            referencedRelation: "sellers"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "seller_members_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      sellers: {
+        Row: {
+          created_at: string
+          description: string
+          id: string
+          name: string
+          reviewed_at: string | null
+          status: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          description?: string
+          id?: string
+          name: string
+          reviewed_at?: string | null
+          status?: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          description?: string
+          id?: string
+          name?: string
+          reviewed_at?: string | null
+          status?: string
+          updated_at?: string
+        }
+        Relationships: []
       }
       sterilization_requests: {
         Row: {
@@ -1114,6 +1297,17 @@ export type Database = {
     }
     Functions: {
       apply_perk: { Args: { p_perk: string }; Returns: undefined }
+      apply_seller: {
+        Args: {
+          p_business_number: string
+          p_contact_email: string
+          p_contact_phone: string
+          p_description: string
+          p_name: string
+        }
+        Returns: string
+      }
+      can_manage_product_folder: { Args: { folder: string }; Returns: boolean }
       cancel_sterilization: { Args: { p_id: string }; Returns: undefined }
       cancel_subscription: { Args: { p_id: string }; Returns: undefined }
       complete_used_trade: {
@@ -1129,7 +1323,13 @@ export type Database = {
       }
       delete_my_account: { Args: never; Returns: undefined }
       grade_rule_met: { Args: { metrics: Json; rule: Json }; Returns: boolean }
+      is_active_seller_member: { Args: { p_seller: string }; Returns: boolean }
+      is_admin: { Args: never; Returns: boolean }
+      is_api_request: { Args: never; Returns: boolean }
       is_block_between: { Args: { a: string; b: string }; Returns: boolean }
+      is_order_seller: { Args: { p_order: string }; Returns: boolean }
+      is_seller_member: { Args: { p_seller: string }; Returns: boolean }
+      is_seller_owner: { Args: { p_seller: string }; Returns: boolean }
       member_level: { Args: { uid: string }; Returns: number }
       member_metrics: { Args: { uid: string }; Returns: Json }
       place_order: {
@@ -1190,6 +1390,7 @@ export type Database = {
           kind: string
           min_order: number
           name: string
+          seller_id: string | null
           seller_share_pct: number
           valid_days: number
           value: number

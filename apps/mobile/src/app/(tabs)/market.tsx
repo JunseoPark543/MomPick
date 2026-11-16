@@ -7,7 +7,7 @@ import DealTimer from '@/components/market/DealTimer';
 import ProductCard from '@/components/market/ProductCard';
 import TopBar from '@/components/TopBar';
 import { colors, fontSize } from '@/constants/theme';
-import { MARKET_CATEGORIES, type Product, type ProductCategory } from '@/lib/market';
+import { MARKET_CATEGORIES, PRODUCT_COLUMNS, type Product, type ProductCategory } from '@/lib/market';
 import { useRequireLogin } from '@/lib/requireLogin';
 import { supabase } from '@/lib/supabase';
 
@@ -21,7 +21,7 @@ export default function MarketScreen() {
   const load = useCallback(async () => {
     const { data } = await supabase
       .from('products')
-      .select('*')
+      .select(PRODUCT_COLUMNS)
       .order('sort_order')
       .order('created_at', { ascending: false })
       .returns<Product[]>();

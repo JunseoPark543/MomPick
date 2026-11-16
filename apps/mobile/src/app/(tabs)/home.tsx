@@ -9,7 +9,7 @@ import ProductCard from '@/components/market/ProductCard';
 import TopBar from '@/components/TopBar';
 import { colors, fontSize } from '@/constants/theme';
 import { useAuth } from '@/lib/auth';
-import type { Product } from '@/lib/market';
+import { PRODUCT_COLUMNS, type Product } from '@/lib/market';
 import { useLevelCheck } from '@/lib/useLevelCheck';
 import { fromBirthMonthDate, monthsOld } from '@/lib/childAge';
 import { formatWon } from '@/lib/format';
@@ -35,7 +35,7 @@ export default function HomeScreen() {
       if (session) levelCheck();
       supabase
         .from('products')
-        .select('*')
+        .select(PRODUCT_COLUMNS)
         .eq('is_deal', true)
         .order('sort_order')
         .returns<Product[]>()

@@ -10,7 +10,7 @@ import { ProductImage } from '@/components/market/ProductCard';
 import { colors, fontSize } from '@/constants/theme';
 import { useAuth } from '@/lib/auth';
 import { formatCountdown, formatNumber, formatWon } from '@/lib/format';
-import { dealState, discountRate, type Product } from '@/lib/market';
+import { PRODUCT_COLUMNS, dealState, discountRate, type Product } from '@/lib/market';
 import { useProfile } from '@/lib/profile';
 import { useRequireLogin } from '@/lib/requireLogin';
 import { DEFAULT_SETTINGS, fetchSettings, type AppSettings } from '@/lib/settings';
@@ -31,7 +31,7 @@ export default function ProductScreen() {
   useEffect(() => {
     supabase
       .from('products')
-      .select('*')
+      .select(PRODUCT_COLUMNS)
       .eq('id', id)
       .maybeSingle<Product>()
       .then(({ data }) => {
@@ -64,7 +64,7 @@ export default function ProductScreen() {
         <ProductImage product={product} radius={0} />
 
         <View style={styles.body}>
-          <Text style={styles.seller}>{product.seller_name}</Text>
+          <Text style={styles.seller}>{product.seller?.name}</Text>
           <Text style={styles.name}>{product.name}</Text>
           {product.review_count > 0 ? (
             <View style={styles.ratingRow}>

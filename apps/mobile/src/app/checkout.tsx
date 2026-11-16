@@ -11,7 +11,7 @@ import PriceRows from '@/components/PriceRows';
 import { colors, fontSize } from '@/constants/theme';
 import type { UserCoupon } from '@/lib/coupons';
 import { formatNumber } from '@/lib/format';
-import { shippingFee, type Product } from '@/lib/market';
+import { PRODUCT_COLUMNS, shippingFee, type Product } from '@/lib/market';
 import { rpcErrorMessage } from '@/lib/rpcError';
 import { DEFAULT_SETTINGS, fetchSettings, type AppSettings } from '@/lib/settings';
 import { supabase } from '@/lib/supabase';
@@ -32,7 +32,7 @@ export default function CheckoutScreen() {
   const [paying, setPaying] = useState(false);
 
   useEffect(() => {
-    supabase.from('products').select('*').eq('id', productId).maybeSingle<Product>().then(({ data }) => setProduct(data));
+    supabase.from('products').select(PRODUCT_COLUMNS).eq('id', productId).maybeSingle<Product>().then(({ data }) => setProduct(data));
     fetchSettings().then(setSettings);
   }, [productId]);
 

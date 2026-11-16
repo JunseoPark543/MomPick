@@ -39,4 +39,10 @@
 - **저장소 구조** (2026-11-16): 모노레포 — 구매자 앱(Expo), 판매자 웹·관리자 웹(Next.js, Vercel), 공통 Supabase. npm 워크스페이스.
 - **DB 변경**: Supabase CLI(`supabase/migrations/` + `npm run db:push`). 대시보드에 SQL 붙여넣기는 하지 않는다.
 - **DB 타입**: `npm run db:types` 로 자동 생성 → `@mompick/shared`. 자동 타입이 모르는 규칙(서버가 채우는 칸, null 허용 인자)은 `packages/shared/src/index.ts` 에서 보정.
+- **역할 구조** (2026-11-16): 계정은 하나(Supabase Auth), 역할은 표로 구분(`admin_users`, `seller_members`).
+  - 입점: **판매자 신청 → 관리자 승인**. 승인 전에는 상품 등록 불가.
+  - 특가: **판매자가 가격·기간 제안, "나무 맘 먼저"(선구매) 지정은 관리자만.** 노출 순서·평점도 관리자만.
+  - 첫 관리자: **관리자 전용 계정**을 새로 만들어 지정 (일상 계정과 분리).
+  - 관리자 작업은 모두 `admin_actions` 에 자동 기록. 채팅은 신고된 방만 관리자가 열람.
+  - 판매자는 자기 상품이 든 주문의 배송지까지 볼 수 있다 (배송에 필요).
 - **AI 도구**: Claude Code 와 Codex 를 번갈아 쓴다. 원본 규칙은 `AGENTS.md`, 진행 상황은 `docs/STATUS.md` (2026-11-16).

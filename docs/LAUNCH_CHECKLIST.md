@@ -11,6 +11,9 @@
 - [ ] **예시 데이터 정리**: 가짜 회원 `seed01~15@mompick-demo.dev` 와 그 글·매물 삭제 (Auth 사용자 삭제 시 연결 데이터도 함께 지워짐).
 - [ ] **운영 설정값 확인**: `app_settings` 의 `best_post_min_likes`(10), `report_hide_threshold`(3) 등이 테스트용 값(1)으로 남아 있지 않은지.
 - [ ] **`.env.local` 정리**: `SUPABASE_PW` 같은 비밀 값이 남아 있지 않은지.
+- [ ] **유출 비밀번호 차단 켜기**: Supabase → Authentication → 비밀번호 보안의 leaked password protection (보안 점검 경고).
+- [ ] **시험 흔적 정리**: "검증용 테스트 업체"(반려), seed01 검증용 주문, 데모 업체 연락처(`demo@mompick-demo.dev`).
+- [ ] **RLS 성능 정리**: 같은 테이블에 읽기 정책이 여러 개라는 성능 경고(multiple permissive policies) — 데이터가 늘기 전에 정책 합치기.
 
 ## 검토할 것
 - [ ] **DB 리전**: 지금 시드니(ap-southeast-2). 한국 사용자 속도를 위해 서울(ap-northeast-2) 이전 검토.

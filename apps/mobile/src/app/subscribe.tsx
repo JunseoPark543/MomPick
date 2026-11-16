@@ -8,7 +8,7 @@ import FormScreen from '@/components/FormScreen';
 import SegmentedTabs from '@/components/SegmentedTabs';
 import { colors, fontSize } from '@/constants/theme';
 import { formatWon } from '@/lib/format';
-import type { Product } from '@/lib/market';
+import { PRODUCT_COLUMNS, type Product } from '@/lib/market';
 import { rpcErrorMessage } from '@/lib/rpcError';
 import { supabase } from '@/lib/supabase';
 import { useLevelCheck } from '@/lib/useLevelCheck';
@@ -26,7 +26,7 @@ export default function SubscribeScreen() {
   const [saving, setSaving] = useState(false);
 
   useEffect(() => {
-    supabase.from('products').select('*').eq('id', productId).maybeSingle<Product>().then(({ data }) => setProduct(data));
+    supabase.from('products').select(PRODUCT_COLUMNS).eq('id', productId).maybeSingle<Product>().then(({ data }) => setProduct(data));
   }, [productId]);
 
   if (!product) return null;

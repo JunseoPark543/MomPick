@@ -7,14 +7,15 @@
 - **날짜**: 2026-11-16
 - **넘기는 도구 → 받는 도구**: Claude Code → (아직 전환 없음, 최초 작성)
 - **마지막 커밋**: 이 문서를 처음 만든 커밋 (`git log -1` 로 확인)
-- **진행 중이던 일**: 없음. 저장소 확장 계획 중 1단계(모노레포), 2단계(Supabase CLI·공통 타입)를 끝냈다.
-- **바로 다음 할 일**: 저장소 확장 3단계 — DB 에 판매자·관리자 역할 추가. **먼저 테이블·권한 설계를 사용자에게 보여주고 승인받은 뒤** 마이그레이션을 만든다. (아래 "다음 할 일" 참고)
+- **진행 중이던 일**: 없음. 저장소 확장 1단계(모노레포), 2단계(Supabase CLI·공통 타입), 3단계(판매자·관리자 역할 DB)를 끝냈다.
+- **바로 다음 할 일**: (1) 사용자가 관리자 전용 계정을 앱에서 가입하면 `admin_users` 에 등록 (아래 "사용자가 해야 할 일") (2) 저장소 확장 4단계 — 관리자 웹(`apps/admin`, Next.js) 계획을 먼저 보여주고 시작.
 - **주의할 점**:
   - DB 변경은 `supabase/migrations/` 에 새 SQL 파일 → `npm run db:push`(운영 DB, 사용자에게 먼저 알림) → `npm run db:types`.
   - 테이블 사이에 연결(FK)이 여러 개면 Supabase 조회에서 어느 연결인지 명시한다. 예: `profiles!posts_author_id_fkey(nickname)`. 안 그러면 "more than one relationship" 오류가 난다.
   - 웹은 정적 렌더링(`web.output: static`)이라, 모듈 맨 위에서 `window`/`localStorage` 를 바로 쓰면 빌드가 깨진다. (`src/lib/authStorage*.ts` 참고)
   - React Native Web 에서는 `flex: 0` 을 쓰지 말 것 (너비 0 으로 해석돼 카드가 찌그러졌던 적 있음).
 - **사용자가 해야 할 일**:
+  - **관리자 전용 계정 만들기**: 앱(또는 웹 미리보기)에서 관리자용 이메일로 회원가입 → 시작하기까지 완료 → 그 이메일을 AI 도구에 알려주면 `npx supabase db query --remote` 로 `admin_users` 에 등록 (이메일은 저장소에 적지 않는다)
   - `apps/mobile/.env.local` 의 `SUPABASE_PW` 줄 삭제 (여러 번 안내함, 아직 남아 있음)
   - 베스트·신고 기준값 원래대로 되돌리는 SQL 실행 여부 확인 필요 (`best_post_min_likes`=10, `report_hide_threshold`=3, 예시 글 베스트 정리)
   - 웹을 고정 주소(`eas deploy --prod`)로 올릴지 결정
@@ -35,12 +36,18 @@
 - **저장소 확장 1단계**: 모노레포(`apps/mobile`, npm 워크스페이스)
 - **저장소 확장 2단계**: Supabase CLI 연결, 마이그레이션 01~11 적용 기록(repair), DB 타입 자동 생성 → `@mompick/shared`, 앱 Supabase 클라이언트에 타입 적용
 - **AI 도구 전환 체계**: `AGENTS.md` 단일 원본 + `CLAUDE.md` 연결 + `docs/` 인수인계 문서
+- **저장소 확장 3단계 — 판매자·관리자 역할** (2026-11-16, 마이그레이션 `20261116000001`, `…0002`)
+  - 새 테이블: `admin_users`, `admin_actions`(관리자 작업 기록), `sellers`(심사 중/활동/정지/반려), `seller_contacts`(연락처, 비공개), `seller_members`(대표/직원)
+  - `products.seller_id` (기존 8개 → "맘픽 셀렉트", "맘픽 이유식 공방" 업체로 연결, `seller_name` 은 옛 앱 호환용으로만 남김), `order_items` 에 `seller_id`·배송 상태·송장, `coupon_templates.seller_id`, 사진 폴더 `product-images`
+  - 판매자: 활동 업체만 자기 상품 등록·수정(선구매·노출 순서·평점은 관리자만), 자기 상품 주문·구독 보기, 배송 처리
+  - 관리자: 모든 글·댓글·매물·신고·주문·살균 보기, 숨김·팩트 체크·베스트, 신고 처리, 업체 승인·정지, 설정·등급·쿠폰·배지 수정, 신고된 채팅만 열람. 모든 변경은 `admin_actions` 에 자동 기록
+  - 정지된 업체 상품은 목록·주문 모두 막힘 (`place_order` 갱신)
+  - 트리거 함수 실행 권한 닫음 + public 함수 기본 실행 권한 닫음 (보안 점검 경고 정리)
+  - 검증: 가짜 회원 계정으로 권한 시험 20개 항목 통과. 시험 흔적으로 **"검증용 테스트 업체"(심사 중, seed01 이 대표)**와 **seed01 의 검증용 주문 1건**이 남아 있음 → 관리자 웹에서 반려/정리
+  - 구매자 앱: 상품 판매처 이름을 `sellers` 에서 읽도록 변경 (`PRODUCT_COLUMNS`)
 
 ## 다음 할 일
-1. **저장소 확장 3단계 — DB 판매자·관리자 역할** (설계 먼저 보여주기)
-   - `sellers`(입점업체), `seller_members`(업체 계정) 테이블, `products`·`order_items`·`coupon_templates` 에 `seller_id` 연결
-   - 관리자 역할(`admin`) + 관리자만 할 수 있는 일: 신고 처리, 글·매물 숨김/해제, 팩트 체크 표시, 베스트 지정/취소, 설정·등급·쿠폰 변경
-   - 브라우저에 secret(service role) 키를 절대 두지 않는 구조
-2. **4단계 — 관리자 웹** (`apps/admin`, Next.js, Vercel)
-3. **5단계 — 판매자 웹** (`apps/seller`, Next.js, Vercel): 상품 등록, 주문 확인, 쿠폰 참여
+1. **관리자 계정 등록** (사용자가 가입한 뒤)
+2. **저장소 확장 4단계 — 관리자 웹** (`apps/admin`, Next.js, Vercel): 신고 처리, 숨김·팩트 체크·베스트, 업체 승인, 살균 신청 상태, 설정·등급·쿠폰, 작업 기록. 브라우저에는 publishable 키만(관리자 권한은 RLS 로)
+3. **5단계 — 판매자 웹** (`apps/seller`, Next.js, Vercel): 입점 신청(`apply_seller`), 상품 등록(사진 `product-images/{seller_id}/`), 주문 배송 처리, 쿠폰 참여. 직원 추가 기능은 아직 없음(DB 함수 필요)
 4. 그 밖에 남은 일: `docs/LAUNCH_CHECKLIST.md`

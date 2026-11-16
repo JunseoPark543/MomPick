@@ -76,6 +76,10 @@ mompick/
 ## 보안·개인정보 원칙 (항상 지킬 것)
 - **모든 Supabase 테이블에 RLS(Row Level Security)를 켠다.** 테이블을 만들 때마다 "누가 읽고/쓰고/고칠 수 있는지" 정책을 함께 만들고 사용자에게 설명한다.
 - 서버가 정해야 하는 값(가격·할인·등급·글쓴이 동네 등)은 앱이 보내지 못하게 컬럼 권한(grant)과 DB 함수로 막는다.
+- **역할**: 관리자 = `admin_users`(DB 에서만 추가), 판매자 = `seller_members`(입점 신청 `apply_seller` → 관리자 승인). RLS 에서는 `is_admin()`, `is_seller_member(id)`, `is_active_seller_member(id)` 를 쓴다.
+- **관리자만 바꿀 칸**(숨김, 팩트 체크, 베스트, 업체 상태, 선구매 지정 등): API 요청은 모두 `authenticated` 역할이라 칸 권한만으로는 못 나눈다. 칸 권한은 열고 **guard 트리거**(`is_api_request() and not is_admin()` 이면 거절)로 막는다. 관리자가 바꾼 것은 `log_admin_change` 트리거가 `admin_actions` 에 기록한다.
+- **새 DB 함수**: public 스키마 함수는 기본 실행 권한이 닫혀 있다(2026-11-16). 앱에서 부를 함수는 `grant execute ... to authenticated` 를 꼭 쓴다. 트리거 함수는 권한을 주지 않는다.
+- DB 를 바꾼 뒤 `npx supabase db advisors --remote --type security` 로 보안 점검을 돌린다.
 - 사용자는 **성인 보호자**만. 아이 정보는 **출생 연월(월령 계산용)** 만 받는다. 아이 실명·사진·건강 정보는 받지 않는다.
 - 동네는 동 단위까지만 저장하고, 정확한 주소는 주문·살균 신청 때만 받는다.
 - 앱 안에 **회원 탈퇴** 기능과 **게시글·채팅 신고/차단** 기능을 둔다 (스토어 심사 필수).

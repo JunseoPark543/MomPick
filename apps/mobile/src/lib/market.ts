@@ -12,7 +12,9 @@ export type Product = {
   name: string;
   description: string;
   category: ProductCategory;
-  seller_name: string;
+  seller_id: string;
+  // 판매 업체 (PRODUCT_COLUMNS 로 불러올 때 함께 옴)
+  seller: { name: string } | null;
   price: number;
   original_price: number;
   image_url: string | null;
@@ -28,6 +30,9 @@ export type Product = {
   early_access: boolean;
   subscribable: boolean;
 };
+
+// 상품을 불러올 때 쓰는 칸: 상품 전체 + 업체 이름
+export const PRODUCT_COLUMNS = '*, seller:sellers(name)';
 
 export const MARKET_CATEGORIES: { value: ProductCategory | 'sterilize'; label: string; icon: IconName }[] = [
   { value: 'babyfood', label: '이유식', icon: 'restaurant-outline' },
