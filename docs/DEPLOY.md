@@ -12,6 +12,18 @@
 | `app.mompik.com` | 구매자 앱 웹 버전 | `apps/mobile` (`apps/mobile/vercel.json` 사용) |
 | `seller.mompik.com` | 판매자 웹 | `apps/seller` |
 | `admin.mompik.com` | 관리자 웹 | `apps/admin` |
+- **Vercel 프로젝트** (계정 junseopark543): `mompik-web`, `mompik-app`, `mompik-seller`, `mompik-admin` — GitHub `main` 에 올리면 자동 배포. 임시 주소 `https://<프로젝트>.vercel.app`
+- **가비아 DNS 기록** (2026-11-16 Vercel 이 알려 준 값):
+
+  | 타입 | 호스트 | 값 |
+  |---|---|---|
+  | A | @ | 216.198.79.1 |
+  | A | @ | 64.29.17.1 |
+  | CNAME | www | 0fc43d185c2a5213.vercel-dns-017.com. |
+  | CNAME | app | a9d74b01c312fd51.vercel-dns-017.com. |
+  | CNAME | seller | 74c646872bc68188.vercel-dns-017.com. |
+  | CNAME | admin | e78c34fb4465b9e8.vercel-dns-017.com. |
+  - 확인: `npx vercel@latest domains verify <주소>`
 - 웹 4개 모두 **Vercel** (EAS Hosting 은 내 도메인 연결이 유료 요금제라서). 가비아 → DNS 관리에서 Vercel 이 알려 주는 기록(A·CNAME)을 넣는다.
 - Vercel 환경 변수: Next.js 3개는 `NEXT_PUBLIC_SUPABASE_URL`·`NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY`(관리자·판매자), 대표 페이지는 `NEXT_PUBLIC_APP_WEB_URL=https://app.mompik.com`, `NEXT_PUBLIC_SELLER_SIGNUP_URL=https://seller.mompik.com/signup`. 구매자 웹은 `EXPO_PUBLIC_SUPABASE_URL`·`EXPO_PUBLIC_SUPABASE_PUBLISHABLE_KEY`.
 - 구매자 웹의 번호가 들어가는 주소(`/post/123` 등)는 `apps/mobile/vercel.json` 의 rewrites 로 `post/[id].html` 에 연결. 배포 후 실제로 열어 확인할 것.
