@@ -1,0 +1,15 @@
+{
+  "$schema": "https://openapi.vercel.sh/vercel.json",
+  "buildCommand": "npx expo export --platform web",
+  "outputDirectory": "dist",
+  "framework": null,
+  "cleanUrls": true,
+  "rewrites": [
+    { "source": "/post/:id", "destination": "/post/[id]" },
+    { "source": "/used/:id", "destination": "/used/[id]" },
+    { "source": "/product/:id", "destination": "/product/[id]" },
+    { "source": "/chat/:roomId", "destination": "/chat/[roomId]" },
+    { "source": "/profile/:field", "destination": "/profile/[field]" },
+    { "source": "/legal/:doc", "destination": "/legal/[doc]" }
+  ]
+}

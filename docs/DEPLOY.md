@@ -5,6 +5,18 @@
 - **Supabase 프로젝트**: MomPick, ref `otbegcnauueufxlrsxqo`, 리전 ap-southeast-2(시드니). CLI 는 맨 위 폴더에서 이미 연결됨 (`supabase/.temp/project-ref`).
 - **GitHub**: https://github.com/JunseoPark543/MomPick (main 브랜치)
 
+## 도메인 (mompik.com, 2026-11-16 가비아에서 구매, 네임서버는 가비아 기본)
+| 주소 | 연결할 곳 | Vercel 프로젝트 Root Directory |
+|---|---|---|
+| `mompik.com`, `www.mompik.com` | 대표 페이지 | `apps/web` |
+| `app.mompik.com` | 구매자 앱 웹 버전 | `apps/mobile` (`apps/mobile/vercel.json` 사용) |
+| `seller.mompik.com` | 판매자 웹 | `apps/seller` |
+| `admin.mompik.com` | 관리자 웹 | `apps/admin` |
+- 웹 4개 모두 **Vercel** (EAS Hosting 은 내 도메인 연결이 유료 요금제라서). 가비아 → DNS 관리에서 Vercel 이 알려 주는 기록(A·CNAME)을 넣는다.
+- Vercel 환경 변수: Next.js 3개는 `NEXT_PUBLIC_SUPABASE_URL`·`NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY`(관리자·판매자), 대표 페이지는 `NEXT_PUBLIC_APP_WEB_URL=https://app.mompik.com`, `NEXT_PUBLIC_SELLER_SIGNUP_URL=https://seller.mompik.com/signup`. 구매자 웹은 `EXPO_PUBLIC_SUPABASE_URL`·`EXPO_PUBLIC_SUPABASE_PUBLISHABLE_KEY`.
+- 구매자 웹의 번호가 들어가는 주소(`/post/123` 등)는 `apps/mobile/vercel.json` 의 rewrites 로 `post/[id].html` 에 연결. 배포 후 실제로 열어 확인할 것.
+- Vercel 무료(Hobby) 요금제는 **비상업용**이 조건이다. 정식 서비스(수익 발생) 전에는 Pro 로 바꾼다.
+
 ## 비밀 값 위치
 - `apps/mobile/.env.local` (Git 제외): `EXPO_PUBLIC_SUPABASE_URL`, `EXPO_PUBLIC_SUPABASE_PUBLISHABLE_KEY` — 앱에 들어가는 공개 값만. 형식은 `apps/mobile/.env.example`.
 - **EAS 클라우드 빌드용**: 같은 두 값을 EAS 환경 변수(development·preview·production)에 등록해 둠. `eas.json` 의 각 프로필이 `environment` 로 연결.

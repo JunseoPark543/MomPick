@@ -20,9 +20,13 @@
 - [ ] 🤝 시험 흔적 정리: "검증용 테스트 업체" 반려, seed01 검증용 주문, 데모 업체 연락처(`demo@mompick-demo.dev`)
 
 ## 3. 배포
-- [ ] 🤝 관리자 웹 Vercel 배포 (사용자 Vercel 계정 필요, Root Directory `apps/admin`)
-- [ ] 🤝 판매자 웹 Vercel 배포 (Root Directory `apps/seller`) → 배포 주소를 대표 페이지 환경 변수 `NEXT_PUBLIC_SELLER_SIGNUP_URL`(…/signup)에 넣으면 입점 신청 버튼이 켜짐
-- [ ] 🤝 대표 페이지 Vercel 배포 (Root Directory `apps/web`) + 맘픽 도메인 연결
+- [x] 👤 도메인 `mompik.com` 구매 (2026-11-16, 가비아)
+- [ ] 👤 Vercel 가입(GitHub 로그인) + MomPick 저장소 접근 허용
+- [ ] 🤝 구매자 웹 Vercel 배포 (Root Directory `apps/mobile`) → `app.mompik.com`
+- [ ] 🤝 관리자 웹 Vercel 배포 (Root Directory `apps/admin`) → `admin.mompik.com`
+- [ ] 🤝 판매자 웹 Vercel 배포 (Root Directory `apps/seller`) → `seller.mompik.com`. 배포 주소를 대표 페이지 환경 변수 `NEXT_PUBLIC_SELLER_SIGNUP_URL`(…/signup)에 넣으면 입점 신청 버튼이 켜짐
+- [ ] 🤝 대표 페이지 Vercel 배포 (Root Directory `apps/web`) → `mompik.com`, `www.mompik.com`
+- [ ] 🤝 가비아 DNS 에 Vercel 기록 입력 (4개 주소)
 - [ ] 🤖 대표 페이지 앱 화면 사진 다시 찍기: 구매자 웹 고정 주소 배포 후 `NEXT_PUBLIC_APP_WEB_URL` 도 그 주소로 (지금은 미리보기 주소)
 - [ ] 🤖 구매자 웹 고정 주소 배포 (`eas deploy --prod`)
 - [ ] 🤖 안드로이드 APK 새로 빌드 — 지금 APK 는 모노레포 이동·등급/마켓 이전 코드 기준
