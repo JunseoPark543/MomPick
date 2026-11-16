@@ -41,7 +41,8 @@ export function useLoad<T>(load: () => Promise<T>, deps: unknown[] = []) {
 }
 
 // Supabase 결과에서 오류면 던지고, 아니면 데이터를 돌려준다
-export function unwrap<T>(result: { data: T | null; error: { message: string } | null }): T {
+export function unwrap<T>(result: { data: T; error: { message: string } | null }): NonNullable<T> {
   if (result.error) throw new Error(result.error.message);
-  return result.data as T;
+  if (result.data === null || result.data === undefined) throw new Error("데이터가 없어요.");
+  return result.data;
 }

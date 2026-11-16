@@ -42,5 +42,10 @@ npx eas-cli@latest build -p android --profile preview
   (이메일은 저장소 문서에 적지 않는다)
 - **Vercel 배포 (아직 안 함)**: Vercel 에서 GitHub 저장소 가져오기 → Root Directory 를 `apps/admin` 으로 → 환경 변수 위 2개 등록 → Deploy. 모노레포라 설치는 맨 위 폴더 기준으로 된다.
 
+## 판매자 웹 (`apps/seller`)
+- 비밀 값: `apps/seller/.env.local` — 관리자 웹과 같은 두 공개 값 (`.env.example` 참고).
+- 내 컴퓨터에서: 맨 위 폴더에서 `npm run seller` → http://localhost:3002
+- Vercel 배포 (아직 안 함): 관리자 웹과 같은 방법, Root Directory 만 `apps/seller`.
+
 ## 예시 데이터
 - `npm run seed` (맨 위 폴더). 가짜 회원 비밀번호는 `scripts/seed-accounts.local.json`(Git 제외).

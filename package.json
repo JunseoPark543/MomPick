@@ -11,7 +11,8 @@
     "db:types": "supabase gen types --remote --schema public > packages/shared/src/database.types.ts",
     "db:push": "supabase db push --remote",
     "db:status": "supabase migration list --remote",
-    "admin": "npm run dev --workspace @mompick/admin"
+    "admin": "npm run dev --workspace @mompick/admin",
+    "seller": "npm run dev --workspace @mompick/seller"
   },
   "devDependencies": {
     "supabase": "^3.1.0"
