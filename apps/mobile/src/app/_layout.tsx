@@ -24,10 +24,18 @@ function RootNavigator() {
   const { session, isLoading: authLoading } = useAuth();
   const { isOnboarded, isLoading: profileLoading } = useProfile();
 
-  if (!authLoading && !profileLoading) {
-    SplashScreen.hide();
+  // 웹에서 상세 주소를 직접 열면 로그인 정보와 프로필이 서로 다른 시점에 복원된다.
+  // 그 사이에는 온보딩 여부를 아직 알 수 없으므로 Stack.Protected가 현재 상세 화면을
+  // 첫 화면으로 바꾸지 않게, 두 정보가 준비될 때까지 화면 전환 자체를 미룬다.
+  if (authLoading || profileLoading) {
+    return (
+      <View style={styles.loading}>
+        <ActivityIndicator size="large" color={colors.primary} />
+      </View>
+    );
   }
 
+  SplashScreen.hide();
   const loggedIn = !!session;
 
   return (
@@ -77,13 +85,6 @@ function RootNavigator() {
           <Stack.Screen name="(auth)" />
         </Stack.Protected>
       </Stack>
-
-      {/* 로그인 직후 회원 정보를 불러오는 동안 화면이 깜빡이지 않게 가린다 */}
-      {profileLoading ? (
-        <View style={styles.loading}>
-          <ActivityIndicator size="large" color={colors.primary} />
-        </View>
-      ) : null}
     </View>
   );
 }
