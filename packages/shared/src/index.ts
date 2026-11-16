@@ -4,6 +4,7 @@
 import type { Database as GeneratedDatabase } from './database.types';
 
 export type { Json, Tables, TablesInsert, TablesUpdate } from './database.types';
+export * from './labels';
 
 type Public = GeneratedDatabase['public'];
 type GenTables = Public['Tables'];

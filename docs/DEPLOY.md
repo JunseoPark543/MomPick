@@ -34,5 +34,13 @@ npx eas-cli@latest build -p android --profile preview
 - 서명 키(keystore)는 Expo 서버가 보관.
 - 무료 요금제는 월 빌드 횟수 제한·대기 시간이 있으니 꼭 필요할 때만.
 
+## 관리자 웹 (`apps/admin`)
+- 비밀 값: `apps/admin/.env.local` — `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY` (구매자 앱과 같은 공개 값. 형식은 `.env.example`). secret 키는 넣지 않는다.
+- 내 컴퓨터에서: 맨 위 폴더에서 `npm run admin` → http://localhost:3001
+- **관리자 계정 등록** (사용자 승인 후): 그 계정으로 앱에서 가입 → 맨 위 폴더에서
+  `npx supabase db query --remote "insert into public.admin_users (user_id, note) select id, '관리자' from auth.users where email = '<이메일>'"`
+  (이메일은 저장소 문서에 적지 않는다)
+- **Vercel 배포 (아직 안 함)**: Vercel 에서 GitHub 저장소 가져오기 → Root Directory 를 `apps/admin` 으로 → 환경 변수 위 2개 등록 → Deploy. 모노레포라 설치는 맨 위 폴더 기준으로 된다.
+
 ## 예시 데이터
 - `npm run seed` (맨 위 폴더). 가짜 회원 비밀번호는 `scripts/seed-accounts.local.json`(Git 제외).
