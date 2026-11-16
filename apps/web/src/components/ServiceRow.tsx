@@ -1,37 +1,65 @@
 import Image from "next/image";
 import type { ReactNode } from "react";
 
-import Icon, { type IconName } from "@/components/Icon";
+import type { Visual } from "@/lib/photos";
 
 type Props = {
-  icon: IconName;
   title: string;
+  href?: string;
   description: string;
-  screen: { src: string; width: number; height: number; alt: string };
-  // 화면 사진 배경색 (서비스마다 다르게)
-  tint: string;
+  visual: Visual;
   children?: ReactNode;
 };
 
-// 서비스 한 줄: 왼쪽 아이콘·이름·설명, 오른쪽 둥근 패널 안의 실제 앱 화면
-export default function ServiceRow({ icon, title, description, screen, tint, children }: Props) {
+// 서비스 한 줄: 왼쪽 이름·설명, 오른쪽 큰 사진 (사진이 없으면 앱 화면)
+export default function ServiceRow({ title, href, description, visual, children }: Props) {
+  const heading = (
+    <>
+      {title}
+      {href ? <span className="ml-1 text-[0.8em]">↗</span> : null}
+    </>
+  );
+
   return (
-    <section className="border-b border-line/70 py-14 last:border-b-0 md:py-20">
-      <div className="grid items-center gap-10 md:grid-cols-2">
+    <section className="border-t border-line py-16 md:py-24">
+      <div className="grid items-center gap-10 md:grid-cols-[1fr_1.1fr] md:gap-16">
         <div>
-          <div className="flex h-16 w-16 items-center justify-center rounded-2xl border border-line bg-white text-brand shadow-sm">
-            <Icon name={icon} />
-          </div>
-          <h3 className="mt-8 text-2xl font-extrabold md:text-3xl">{title}</h3>
-          <p className="mt-4 max-w-md text-base leading-7 text-foreground/75 md:text-lg md:leading-8">{description}</p>
+          <h3 className="text-[28px] font-bold leading-snug md:text-[34px]">
+            {href ? (
+              <a href={href} className="hover:underline">
+                {heading}
+              </a>
+            ) : (
+              heading
+            )}
+          </h3>
+          <p className="mt-5 max-w-[420px] text-[17px] leading-[1.75] text-sub">{description}</p>
           {children}
         </div>
-        <div className="relative h-72 overflow-hidden rounded-[28px] md:h-80" style={{ background: tint }}>
-          <div className="absolute left-1/2 top-8 w-[62%] max-w-[300px] -translate-x-1/2 overflow-hidden rounded-t-[26px] border-[6px] border-b-0 border-foreground/90 bg-white shadow-2xl">
-            <Image src={screen.src} width={screen.width} height={screen.height} alt={screen.alt} className="h-auto w-full" />
-          </div>
-        </div>
+        <VisualBox visual={visual} />
       </div>
     </section>
+  );
+}
+
+function VisualBox({ visual }: { visual: Visual }) {
+  if (visual.kind === "photo") {
+    return (
+      <div className="relative aspect-[27/16] overflow-hidden rounded-[24px] bg-soft">
+        <Image src={visual.src} alt={visual.alt} fill sizes="(min-width: 768px) 560px, 100vw" className="object-cover" />
+      </div>
+    );
+  }
+  // 사진이 오기 전: 앱 화면 위쪽만 담백하게
+  return (
+    <div className="relative aspect-[27/16] overflow-hidden rounded-[24px] bg-soft">
+      <Image
+        src={visual.src}
+        width={visual.width}
+        height={visual.height}
+        alt={visual.alt}
+        className="absolute left-1/2 top-10 w-[54%] -translate-x-1/2 rounded-t-[18px] shadow-[0_8px_30px_rgba(0,0,0,0.08)]"
+      />
+    </div>
   );
 }

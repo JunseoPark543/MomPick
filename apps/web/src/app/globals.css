@@ -1,23 +1,23 @@
 @import "tailwindcss";
 
-/* 맘픽 대표 페이지: 밝고 따뜻한 톤 (로고 분홍) */
+/* 맘픽 대표 페이지: 흰 바탕·큰 여백·큰 글씨. 분홍은 포인트로만 쓴다. */
 :root {
-  --background: #fff9f4;
-  --foreground: #2b2523;
+  --foreground: #1a1a1a;
+  --sub: #4d5159;
+  --muted: #868b94;
+  --line: #eaebee;
+  --soft: #f2f3f6;
   --brand: #ed5d66;
-  --brand-soft: #fdecee;
-  --muted: #8a7f78;
-  --line: #eaddd3;
 }
 
 @theme inline {
-  --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --color-brand: var(--brand);
-  --color-brand-soft: var(--brand-soft);
+  --color-sub: var(--sub);
   --color-muted: var(--muted);
   --color-line: var(--line);
-  --font-sans: var(--font-geist-sans);
+  --color-soft: var(--soft);
+  --color-brand: var(--brand);
+  --font-sans: var(--font-pretendard);
 }
 
 html {
@@ -27,6 +27,7 @@ html {
 body {
   background: #ffffff;
   color: var(--foreground);
-  font-family: var(--font-geist-sans), "Pretendard", "Malgun Gothic", "Apple SD Gothic Neo", sans-serif;
+  font-family: var(--font-pretendard), "Apple SD Gothic Neo", "Malgun Gothic", sans-serif;
   word-break: keep-all;
+  letter-spacing: -0.01em;
 }

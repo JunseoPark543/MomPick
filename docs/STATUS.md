@@ -15,6 +15,7 @@
   - 테이블 사이에 연결(FK)이 여러 개면 Supabase 조회에서 어느 연결인지 명시한다. 예: `profiles!posts_author_id_fkey(nickname)`. 안 그러면 "more than one relationship" 오류가 난다.
   - 웹은 정적 렌더링(`web.output: static`)이라, 모듈 맨 위에서 `window`/`localStorage` 를 바로 쓰면 빌드가 깨진다. (`src/lib/authStorage*.ts` 참고)
   - React Native Web 에서는 `flex: 0` 을 쓰지 말 것 (너비 0 으로 해석돼 카드가 찌그러졌던 적 있음).
+  - Windows 에서 확인용으로 백그라운드 실행한 `next start` 는 멈춰도 node 가 남아 포트를 잡고 있을 수 있다. 다 쓰면 `netstat -ano` 로 포트(3100~3102 등)를 확인하고 그 node 를 종료한다.
 - **사용자가 해야 할 일**: `docs/BACKLOG.md` "1. 지금 바로" 참고
 - **검증 상태**: 타입 검사·expo-doctor·웹/안드로이드 번들 통과(2026-11-16). 안드로이드 APK 는 빌드 성공했지만 실기기 설치 확인은 사용자 피드백 대기. 신규 SQL 08~11 은 운영 DB 에 적용됨(테이블 존재 확인).
 
@@ -64,6 +65,8 @@
   - 앱 화면 사진은 구매자 웹 미리보기에서 캡처(`apps/web/public/screens/`). **사용자 테스트 글(실명처럼 보이는 닉네임)과 끝난 특가 타이머는 잘라냄**
   - 주소 설정: `apps/web/src/lib/links.ts` (환경 변수 `NEXT_PUBLIC_APP_WEB_URL`, `NEXT_PUBLIC_SELLER_SIGNUP_URL`)
   - 검증: 빌드·eslint 통과, 데스크톱·휴대폰 크기 화면 확인
+  - **디자인 다시 함** (사용자: "너무 AI(클로드) 디자인 같다"): 카드·테두리·아이콘 타일·이모지·파스텔 패널·분홍 띠를 모두 없애고, 레퍼런스처럼 흰 바탕·큰 글씨·얇은 구분선·큰 사진. 한글 글꼴 **Pretendard**(OFL, `src/fonts/`). 분홍은 링크 등 포인트만
+  - **사진 자리**: `apps/web/public/photos/<이름>.jpg` 를 넣으면 그 자리에 사진, 없으면 앱 화면. 필요한 사진 목록·기준은 `public/photos/README.md`. 사용자가 직접 찍은 사진을 줄 예정
 
 ## 다음 할 일
 남은 일 전체는 **`docs/BACKLOG.md`** 에 모아 둔다 (사용자 할 일·테스트·배포·개발 후보·출시 전 필수).
