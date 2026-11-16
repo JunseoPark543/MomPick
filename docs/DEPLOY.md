@@ -24,6 +24,7 @@
   | CNAME | seller | 74c646872bc68188.vercel-dns-017.com. |
   | CNAME | admin | e78c34fb4465b9e8.vercel-dns-017.com. |
   - 확인: `npx vercel@latest domains verify <주소>`
+- **연결 확인 완료 (2026-11-16, Codex)**: 5개 도메인 모두 DNS 기록 일치, Vercel `domains verify` 결과 `ok`·`configured-correctly`, HTTPS 접속 200. `www.mompik.com` 은 `https://mompik.com/` 으로 308 이동.
 - 웹 4개 모두 **Vercel** (EAS Hosting 은 내 도메인 연결이 유료 요금제라서). 가비아 → DNS 관리에서 Vercel 이 알려 주는 기록(A·CNAME)을 넣는다.
 - Vercel 환경 변수: Next.js 3개는 `NEXT_PUBLIC_SUPABASE_URL`·`NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY`(관리자·판매자), 대표 페이지는 `NEXT_PUBLIC_APP_WEB_URL=https://app.mompik.com`, `NEXT_PUBLIC_SELLER_SIGNUP_URL=https://seller.mompik.com/signup`. 구매자 웹은 `EXPO_PUBLIC_SUPABASE_URL`·`EXPO_PUBLIC_SUPABASE_PUBLISHABLE_KEY`.
 - 구매자 웹의 번호가 들어가는 주소(`/post/123` 등)는 `apps/mobile/vercel.json` 의 rewrites 로 `post/[id].html` 에 연결. 배포 후 실제로 열어 확인할 것.
@@ -32,7 +33,8 @@
 ## 비밀 값 위치
 - `apps/mobile/.env.local` (Git 제외): `EXPO_PUBLIC_SUPABASE_URL`, `EXPO_PUBLIC_SUPABASE_PUBLISHABLE_KEY` — 앱에 들어가는 공개 값만. 형식은 `apps/mobile/.env.example`.
 - **EAS 클라우드 빌드용**: 같은 두 값을 EAS 환경 변수(development·preview·production)에 등록해 둠. `eas.json` 의 각 프로필이 `environment` 로 연결.
-- DB 비밀번호는 Supabase CLI 가 이 컴퓨터에만 저장. 저장소·앱에는 없음.
+- DB 비밀번호·secret 키는 앱 환경 변수에 넣지 않는다. CLI 로컬 인증 정보·저장소 밖에서만 관리한다.
+- `apps/mobile/.env.local` 의 과거 `SUPABASE_PW` 줄 삭제 여부는 아직 사용자 확인 필요(`docs/BACKLOG.md`). 이 파일의 비밀 값은 출력하거나 커밋하지 않는다.
 
 ## DB 변경 (맨 위 폴더에서)
 1. `supabase/migrations/<YYYYMMDDHHMMSS>_설명.sql` 새 파일 작성 (RLS·권한 포함)
@@ -41,7 +43,7 @@
 4. `npm run db:status` — 적용 기록 확인
 - 01~11 번은 대시보드에서 수동 적용 후 `supabase migration repair --status applied` 로 기록함 (2026-11-16).
 
-## 구매자 웹 (EAS Hosting) — `apps/mobile` 폴더에서
+## 구매자 웹 (EAS Hosting 옛 미리보기) — `apps/mobile` 폴더에서
 ```
 npx expo export --platform web
 npx eas-cli@latest deploy            # 미리보기 주소 (배포마다 바뀜)
@@ -49,6 +51,7 @@ npx eas-cli@latest deploy --prod     # 고정 주소 (아직 안 함)
 ```
 - `app.json` 의 `web.output` 은 `static` (EAS Hosting 요구).
 - 최근 미리보기: https://mompick--mwb6k3uwi0.expo.app (2026-11-16)
+- 현재 배포 주소는 **https://app.mompik.com** (Vercel). 위 EAS 명령은 옛 미리보기 참고용이며, 정리 여부는 아직 결정 전.
 
 ## 안드로이드 테스트 앱 (APK) — `apps/mobile` 폴더에서
 ```
@@ -61,20 +64,23 @@ npx eas-cli@latest build -p android --profile preview
 ## 관리자 웹 (`apps/admin`)
 - 비밀 값: `apps/admin/.env.local` — `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY` (구매자 앱과 같은 공개 값. 형식은 `.env.example`). secret 키는 넣지 않는다.
 - 내 컴퓨터에서: 맨 위 폴더에서 `npm run admin` → http://localhost:3001
-- **관리자 계정 등록** (사용자 승인 후): 그 계정으로 앱에서 가입 → 맨 위 폴더에서
-  `npx supabase db query --remote "insert into public.admin_users (user_id, note) select id, '관리자' from auth.users where email = '<이메일>'"`
-  (이메일은 저장소 문서에 적지 않는다)
-- **Vercel 배포 (아직 안 함)**: Vercel 에서 GitHub 저장소 가져오기 → Root Directory 를 `apps/admin` 으로 → 환경 변수 위 2개 등록 → Deploy. 모노레포라 설치는 맨 위 폴더 기준으로 된다.
+- **관리자 계정 등록**: 첫 계정은 사용자가 가입 후 Supabase SQL Editor 에서 직접 등록 완료(2026-11-16, DB 관리자 1명 확인). 추가 등록도 사용자 승인 없이 실행하지 않는다. 방법: 가입한 계정 이메일을 아래 SQL 에 넣고 SQL Editor 에서 실행(실제 이메일은 저장소 문서에 적지 않는다).
+  ```sql
+  insert into public.admin_users (user_id, note)
+  select id, '관리자' from auth.users where email = '<이메일>';
+  ```
+- **Vercel 배포 완료**: 프로젝트 `mompik-admin`, Root Directory `apps/admin`, 주소 https://admin.mompik.com. GitHub `main` 자동 배포.
 
 ## 판매자 웹 (`apps/seller`)
 - 비밀 값: `apps/seller/.env.local` — 관리자 웹과 같은 두 공개 값 (`.env.example` 참고).
 - 내 컴퓨터에서: 맨 위 폴더에서 `npm run seller` → http://localhost:3002
-- Vercel 배포 (아직 안 함): 관리자 웹과 같은 방법, Root Directory 만 `apps/seller`.
+- **Vercel 배포 완료**: 프로젝트 `mompik-seller`, Root Directory `apps/seller`, 주소 https://seller.mompik.com. GitHub `main` 자동 배포.
+- 배포 주소에서 seed01 로그인·현재 업체 상태(반려) 안내를 실제 Chrome 으로 확인(2026-11-16). 상품·사진·배송 처리는 관리자 웹에서 테스트 업체를 활동으로 바꾼 뒤 검증 필요.
 
 ## 대표 페이지 (`apps/web`)
 - 내 컴퓨터에서: 맨 위 폴더에서 `npm run web` → http://localhost:3000
-- 환경 변수(선택): `NEXT_PUBLIC_APP_WEB_URL`(구매자 웹 주소, 기본은 미리보기 주소), `NEXT_PUBLIC_SELLER_SIGNUP_URL`(판매자 웹 가입 주소, 비우면 신청 버튼이 "준비 중")
-- Vercel 배포 (아직 안 함): Root Directory `apps/web`. 맘픽 도메인을 여기에 연결한다.
+- 환경 변수: Vercel 에 `NEXT_PUBLIC_APP_WEB_URL=https://app.mompik.com`, `NEXT_PUBLIC_SELLER_SIGNUP_URL=https://seller.mompik.com/signup` 등록 완료. 로컬에서 생략하면 아직 코드 기본값은 옛 EAS 미리보기·입점 준비 중이므로, 현재 주소로 확인하려면 두 값을 설정한다.
+- **Vercel 배포 완료**: 프로젝트 `mompik-web`, Root Directory `apps/web`, 주소 https://mompik.com. GitHub `main` 자동 배포.
 
 ## 예시 데이터
 - `npm run seed` (맨 위 폴더). 가짜 회원 비밀번호는 `scripts/seed-accounts.local.json`(Git 제외).
