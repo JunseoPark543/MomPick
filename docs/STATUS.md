@@ -5,19 +5,29 @@
 
 ## 인수인계 (가장 최근)
 - **날짜**: 2026-11-16
-- **넘기는 도구 → 받는 도구**: Claude Code → (아직 전환 없음, 최초 작성)
-- **마지막 커밋**: 이 문서를 처음 만든 커밋 (`git log -1` 로 확인)
-- **진행 중이던 일**: 없음. 저장소 확장 1~5단계(모노레포, CLI·공통 타입, 역할 DB, 관리자 웹, 판매자 웹)를 모두 끝냈다.
-- **바로 다음 할 일**: 사용자와 다음 방향 정하기 — 남은 일은 `docs/BACKLOG.md`. 사용자는 "테스트는 나중에, 개발부터 쭉쭉"을 원함(2026-11-16).
-- **권한 메모**: 운영 DB 에서 계정에 관리자 권한을 주는 일(`admin_users` 추가)은 사용자 승인 없이 하지 않는다 (자동 실행이 차단됨, 2026-11-16).
+- **넘기는 도구 → 받는 도구**: Claude Code → **Codex**
+- **마지막 커밋**: `인수인계: 클로드 → 코덱스` (`git log -1` 로 확인. 그 전 작업 커밋은 `배포 문서: Vercel 프로젝트와 가비아 DNS 기록`)
+- **진행 중이던 일**: **웹 4개 Vercel 배포 + 도메인 연결** — 배포는 끝났고 **가비아 DNS 입력을 사용자가 하는 중**.
+  - Vercel 프로젝트 4개(계정 junseopark543, GitHub `main` 자동 배포 연결됨): `mompik-web`(apps/web) · `mompik-app`(apps/mobile) · `mompik-seller`(apps/seller) · `mompik-admin`(apps/admin). Node 24.x, 공개 환경 변수 등록 완료
+  - 도메인 5개를 각 프로젝트에 등록 완료: `mompik.com`(+`www` → 308 리다이렉트), `app.`, `seller.`, `admin.`. 가비아에 넣을 A·CNAME 값은 `docs/DEPLOY.md` 표
+  - 임시 주소: `https://mompik-web.vercel.app`, `https://mompik-app.vercel.app`, `https://mompik-seller.vercel.app`, `https://mompik-admin.vercel.app` (사용자 화면에서 정상 확인)
+  - **관리자 계정**: 방법을 안내함 — 판매자 웹(또는 앱)에서 관리자용 이메일로 가입 → 사용자가 Supabase SQL Editor 에서 `admin_users` 에 직접 추가(SQL 은 `docs/DEPLOY.md`). 아직 했다는 말은 없음
+- **바로 다음 할 일**:
+  1. 사용자가 "가비아 넣었어" 하면 `npx vercel@latest domains verify <주소>` 로 5개 주소 연결 확인 → https 접속 확인
+  2. 관리자 계정이 생기면 **한 바퀴 테스트** (`docs/BACKLOG.md` 2번)
+  3. 구매자 웹 주소가 `app.mompik.com` 으로 정해졌으므로: 안드로이드 APK 새로 빌드, 대표 페이지 앱 화면 사진을 새 주소 기준으로 다시 찍기, EAS Hosting 미리보기는 정리 여부 결정
+- **권한 메모**: 운영 DB 에서 계정에 관리자 권한을 주는 일(`admin_users` 추가)은 사용자 승인 없이 하지 않는다 (자동 실행이 차단됨). 사용자가 직접 SQL Editor 에서 하도록 안내했다.
 - **주의할 점**:
-  - DB 변경은 `supabase/migrations/` 에 새 SQL 파일 → `npm run db:push`(운영 DB, 사용자에게 먼저 알림) → `npm run db:types`.
+  - DB 변경은 `supabase/migrations/` 에 새 SQL 파일 → `npm run db:push`(운영 DB, 사용자에게 먼저 알림) → `npm run db:types`. 보안 점검은 `npx supabase db advisors --remote --type security`.
   - 테이블 사이에 연결(FK)이 여러 개면 Supabase 조회에서 어느 연결인지 명시한다. 예: `profiles!posts_author_id_fkey(nickname)`. 안 그러면 "more than one relationship" 오류가 난다.
-  - 웹은 정적 렌더링(`web.output: static`)이라, 모듈 맨 위에서 `window`/`localStorage` 를 바로 쓰면 빌드가 깨진다. (`src/lib/authStorage*.ts` 참고)
+  - 구매자 웹은 정적 렌더링(`web.output: static`)이라, 모듈 맨 위에서 `window`/`localStorage` 를 바로 쓰면 빌드가 깨진다. (`apps/mobile/src/lib/authStorage*.ts` 참고)
   - React Native Web 에서는 `flex: 0` 을 쓰지 말 것 (너비 0 으로 해석돼 카드가 찌그러졌던 적 있음).
-  - Windows 에서 확인용으로 백그라운드 실행한 `next start` 는 멈춰도 node 가 남아 포트를 잡고 있을 수 있다. 다 쓰면 `netstat -ano` 로 포트(3100~3102 등)를 확인하고 그 node 를 종료한다.
-- **사용자가 해야 할 일**: `docs/BACKLOG.md` "1. 지금 바로" 참고
-- **검증 상태**: 타입 검사·expo-doctor·웹/안드로이드 번들 통과(2026-11-16). 안드로이드 APK 는 빌드 성공했지만 실기기 설치 확인은 사용자 피드백 대기. 신규 SQL 08~11 은 운영 DB 에 적용됨(테이블 존재 확인).
+  - Next.js 16(Cache Components): 주소를 읽는 화면은 레이아웃에서 `<Suspense>` 로 감싼다. 각 앱 `AGENTS.md` 대로 `node_modules/next/dist/docs/` 를 먼저 읽는다.
+  - Windows 에서 확인용으로 백그라운드 실행한 `next start` 는 멈춰도 node 가 남아 포트를 잡고 있을 수 있다. 다 쓰면 `netstat -ano` 로 포트를 확인하고 그 node 를 종료한다.
+  - 이 작업 환경(Claude 쪽)에서 `*.vercel.app` 을 curl·헤드리스 브라우저로 열면 배포 직후 잠깐 뒤부터 `404 DEPLOYMENT_NOT_FOUND` 가 나왔지만, **사용자 브라우저에서는 정상**이었다. 자동 확인 결과만 믿지 말고 사용자에게도 확인받을 것.
+  - 맨 위 `.gitignore` 는 사용자가 관리한다(`/obsidian`, Vercel 이 자동 추가한 `.vercel`·`.env*` 줄 포함, 커밋 안 됨). 커밋할 때 `git add -A -- . ':!.gitignore'`.
+- **사용자가 해야 할 일**: 가비아 DNS 입력, 관리자 계정 가입·등록, 그 밖은 `docs/BACKLOG.md` "1. 지금 바로"
+- **검증 상태**: 웹 4개 Vercel 배포 성공(빌드 통과, 임시 주소에서 사용자 확인, 구매자 웹의 상세 주소 `/post/<id>`·`/used/<id>` 와 `/used/new` 연결 확인). 도메인은 DNS 입력 전이라 미확인. 관리자·판매자 웹의 **실제 로그인·버튼 동작은 아직 확인 못 함**(관리자 계정 없음). 안드로이드 APK 는 옛 코드 기준.
 
 ## 완료한 일
 - **1~2단계**: Expo 프로젝트, 하단 탭 5개, Supabase 연결 / 회원가입·로그인(만 19세 이상·약관 동의 서버 검사), 시작하기(닉네임→아이 출생 연월→동네, 서울 427개 행정동)
@@ -67,6 +77,8 @@
   - 검증: 빌드·eslint 통과, 데스크톱·휴대폰 크기 화면 확인
   - **디자인 다시 함** (사용자: "너무 AI(클로드) 디자인 같다"): 카드·테두리·아이콘 타일·이모지·파스텔 패널·분홍 띠를 모두 없애고, 레퍼런스처럼 흰 바탕·큰 글씨·얇은 구분선·큰 사진. 한글 글꼴 **Pretendard**(OFL, `src/fonts/`). 분홍은 링크 등 포인트만
   - **사진 자리**: `apps/web/public/photos/<이름>.jpg` 를 넣으면 그 자리에 사진, 없으면 앱 화면. 필요한 사진 목록·기준은 `public/photos/README.md`. 사용자가 직접 찍은 사진을 줄 예정
+
+- **웹 4개 Vercel 배포 + 도메인** (2026-11-16): 위 인수인계 칸 참고. 구매자 웹은 `apps/mobile/vercel.json`(정적 출력 + 상세 주소 rewrites), EAS Hosting 은 내 도메인 연결이 유료라 Vercel 로 통일
 
 ## 다음 할 일
 남은 일 전체는 **`docs/BACKLOG.md`** 에 모아 둔다 (사용자 할 일·테스트·배포·개발 후보·출시 전 필수).

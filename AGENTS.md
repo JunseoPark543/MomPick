@@ -47,9 +47,9 @@
 ```
 mompick/
 ├─ apps/mobile/       구매자 앱 (Expo). 앱 전용 규칙은 apps/mobile/AGENTS.md
-├─ apps/seller/       판매자 웹 — Next.js 16, Vercel(예정). 관리자 웹과 같은 구조 (apps/seller/AGENTS.md)
-├─ apps/admin/        관리자 웹 — Next.js 16, Vercel(예정). 앱 전용 규칙은 apps/admin/AGENTS.md (Next 16 문서를 먼저 읽을 것)
-├─ apps/web/          대표(소개) 페이지 — 메인(예비 회원용) + /partners(입점 안내). Next.js 16, Vercel(예정)
+├─ apps/seller/       판매자 웹 — Next.js 16, Vercel `seller.mompik.com`. 관리자 웹과 같은 구조 (apps/seller/AGENTS.md)
+├─ apps/admin/        관리자 웹 — Next.js 16, Vercel `admin.mompik.com`. 앱 전용 규칙은 apps/admin/AGENTS.md (Next 16 문서를 먼저 읽을 것)
+├─ apps/web/          대표(소개) 페이지 — 메인(예비 회원용) + /partners(입점 안내). Next.js 16, Vercel `mompik.com`
 ├─ packages/shared/   @mompick/shared: DB 타입(자동 생성) + 공통 코드
 ├─ supabase/          DB 설계 SQL(migrations) + CLI 설정 — 모든 앱 공통
 ├─ scripts/           예시 데이터 넣기 (npm run seed)
@@ -75,7 +75,7 @@ mompick/
 - **대상**: iOS, Android, 웹 (하나의 코드)
 - **서버·DB**: Supabase (Auth 로그인, Postgres DB, Realtime 채팅, Storage 이미지). 서버 계산은 DB 함수(RPC), 실제 결제 연동부터는 Edge Functions
 - **DB 변경**: SQL 파일(`supabase/migrations/`) + Supabase CLI. 대시보드에 직접 붙여넣지 않는다
-- **배포**: 구매자 웹은 EAS Hosting, 앱은 EAS Build → EAS Submit. (예정) 판매자·관리자 웹은 Vercel
+- **배포**: 웹 4개 모두 Vercel (GitHub `main` 에 올리면 자동 배포) — 대표 `mompik.com`, 구매자 웹 `app.`, 판매자 `seller.`, 관리자 `admin.`. 폰 앱은 EAS Build → EAS Submit. 자세한 건 `docs/DEPLOY.md`
 - **관리자·판매자 웹**: Next.js 16(App Router, Cache Components) + Tailwind + `@supabase/ssr`. 화면은 `"use client"` 로 로그인 후 브라우저에서 데이터를 불러온다(`lib/useLoad.ts`). 브라우저에는 publishable 키만, 권한은 RLS 가 지킨다. React 버전은 구매자 앱과 같게 맞춘다(모노레포에 한 벌만). 주소를 읽는 화면(usePathname·동적 경로)은 레이아웃에서 `<Suspense>` 로 감싼다(Cache Components 규칙).
 - **공통 이름표**: DB 값 → 화면 글자(신고 사유, 업체 상태, 배송 상태 등)는 `@mompick/shared` 의 `labels.ts` 에 둔다.
 - 디자인: 따뜻하고 깔끔한 톤, 큰 글씨와 큰 버튼 (한 손으로 아이를 안고 쓰는 상황을 고려). 대표 색은 로고 분홍 `#ED5D66`

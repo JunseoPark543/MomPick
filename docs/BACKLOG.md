@@ -7,9 +7,8 @@
 ## 1. 지금 바로 (사용자)
 - [ ] 👤 `apps/mobile/.env.local` 의 `SUPABASE_PW` 줄 삭제 (DB 비밀번호는 저장소 밖에 보관)
 - [ ] 👤 베스트·신고 기준값을 원래대로 되돌렸는지 확인 — `app_settings`: `best_post_min_likes` = 10, `report_hide_threshold` = 3 (관리자 웹 "운영 설정"에서도 바꿀 수 있음)
-- [ ] 👤 **관리자 전용 계정** 가입 → 🤖 사용자 승인 받고 `admin_users` 에 등록 (방법: `docs/DEPLOY.md`)
+- [ ] 👤 **관리자 전용 계정** 가입 → Supabase SQL Editor 에서 `admin_users` 에 직접 추가 (SQL: `docs/DEPLOY.md`)
 - [ ] 👤 안드로이드 APK 실제 폰 설치 확인
-- [ ] 👤 구매자 웹을 고정 주소(`mompick.expo.app`)로 올릴지 결정
 - [ ] 👤 **대표 페이지 사진 5장** 찍어서 전달 — 목록·기준은 `apps/web/public/photos/README.md` (아이 얼굴 없이, 가로 사진)
 
 ## 2. 한 바퀴 테스트 (관리자 계정 생긴 뒤)
@@ -21,14 +20,12 @@
 
 ## 3. 배포
 - [x] 👤 도메인 `mompik.com` 구매 (2026-11-16, 가비아)
-- [ ] 👤 Vercel 가입(GitHub 로그인) + MomPick 저장소 접근 허용
-- [ ] 🤝 구매자 웹 Vercel 배포 (Root Directory `apps/mobile`) → `app.mompik.com`
-- [ ] 🤝 관리자 웹 Vercel 배포 (Root Directory `apps/admin`) → `admin.mompik.com`
-- [ ] 🤝 판매자 웹 Vercel 배포 (Root Directory `apps/seller`) → `seller.mompik.com`. 배포 주소를 대표 페이지 환경 변수 `NEXT_PUBLIC_SELLER_SIGNUP_URL`(…/signup)에 넣으면 입점 신청 버튼이 켜짐
-- [ ] 🤝 대표 페이지 Vercel 배포 (Root Directory `apps/web`) → `mompik.com`, `www.mompik.com`
-- [ ] 🤝 가비아 DNS 에 Vercel 기록 입력 (4개 주소)
-- [ ] 🤖 대표 페이지 앱 화면 사진 다시 찍기: 구매자 웹 고정 주소 배포 후 `NEXT_PUBLIC_APP_WEB_URL` 도 그 주소로 (지금은 미리보기 주소)
-- [ ] 🤖 구매자 웹 고정 주소 배포 (`eas deploy --prod`)
+- [x] 👤 Vercel 가입 + 🤖 프로젝트 4개 만들기·GitHub 자동 배포 연결·첫 배포 (2026-11-16)
+- [x] 🤖 도메인 5개 Vercel 프로젝트에 등록 (2026-11-16)
+- [ ] 👤 **가비아 DNS 에 Vercel 기록 입력** (값: `docs/DEPLOY.md` 표) → 🤖 `vercel domains verify` 로 확인
+- [ ] 🤖 대표 페이지 앱 화면 사진을 `app.mompik.com` 기준으로 다시 찍기 (대표 페이지 링크는 이미 `app.`/`seller.` 로 설정됨)
+- [ ] 🤝 EAS Hosting 미리보기(구매자 웹 옛 주소) 정리 여부 결정 — 구매자 웹은 이제 Vercel
+- [ ] 🚩👤 Vercel Hobby(무료)는 비상업용 — 수익이 생기기 전에 Pro 로
 - [ ] 🤖 안드로이드 APK 새로 빌드 — 지금 APK 는 모노레포 이동·등급/마켓 이전 코드 기준
 - [ ] 🤝 아이폰: Apple 개발자 계정(연 $99) → TestFlight → App Store 심사
 - [ ] 🤝 안드로이드 정식: Google Play 개발자 계정($25) → production 빌드(AAB) → 심사
